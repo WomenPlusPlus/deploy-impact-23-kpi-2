@@ -5,12 +5,15 @@ import {
 } from '@azure/msal-react';
 import { loginRequest } from '../authConfig';
 import {
+  AppBar,
   Avatar,
   Button,
   Divider,
   IconButton,
   Menu,
   MenuItem,
+  Stack,
+  Toolbar,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
@@ -63,51 +66,75 @@ export const NavigationBar = () => {
    * only render their children if a user is authenticated or unauthenticated, respectively.
    */
   return (
-    <nav>
-      <a href="/">Microsoft identity platform</a>
-      <AuthenticatedTemplate>
-        <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
-          <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-          <Typography>
-            {activeAccount ? activeAccount.name : 'Unknown'}
+    <AppBar
+      elevation={0}
+      sx={{ background: 'white' }}
+    >
+      <Toolbar>
+        <Stack
+          direction={'row'}
+          columnGap={'48px'}
+          ml={'48px'}
+          flexGrow={1}
+        >
+          <Typography
+            fontSize={'20px'}
+            fontWeight={400}
+          >
+            Overview
           </Typography>
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={() => setAnchorEl(null)}
-          onClick={() => setAnchorEl(null)}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          <Typography
+            fontSize={'20px'}
+            fontWeight={400}
+          >
+            Activity
+          </Typography>
+        </Stack>
+        <Stack
+          direction={'row'}
+          columnGap={'48px'}
+          mr={'48px'}
+          flexGrow={0}
         >
-          <MenuItem onClick={handleLogoutPopup}>
-            <Avatar /> pop up logout
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleLogoutRedirect}>
-            <Avatar /> redirect logout
-          </MenuItem>
-        </Menu>
-      </AuthenticatedTemplate>
-      <UnauthenticatedTemplate>
-        <Button onClick={e => setAnchorEl(e.currentTarget)}>Log In</Button>
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={() => setAnchorEl(null)}
-          onClick={() => setAnchorEl(null)}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        >
-          <MenuItem onClick={handleLoginPopup}>
-            <Avatar /> pop up login
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleLoginRedirect}>
-            <Avatar /> redirect login
-          </MenuItem>
-        </Menu>
-      </UnauthenticatedTemplate>
-    </nav>
+          <AuthenticatedTemplate>
+            <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
+              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+              <Typography>
+                {activeAccount ? activeAccount.name : 'Unknown'}
+              </Typography>
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={() => setAnchorEl(null)}
+              onClick={() => setAnchorEl(null)}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem onClick={handleLogoutPopup}>pop up logout</MenuItem>
+              <Divider />
+              <MenuItem onClick={handleLogoutRedirect}>
+                redirect logout
+              </MenuItem>
+            </Menu>
+          </AuthenticatedTemplate>
+          <UnauthenticatedTemplate>
+            <Button onClick={e => setAnchorEl(e.currentTarget)}>Log In</Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={() => setAnchorEl(null)}
+              onClick={() => setAnchorEl(null)}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem onClick={handleLoginPopup}>pop up login</MenuItem>
+              <Divider />
+              <MenuItem onClick={handleLoginRedirect}>redirect login</MenuItem>
+            </Menu>
+          </UnauthenticatedTemplate>
+        </Stack>
+      </Toolbar>
+    </AppBar>
   );
 };
