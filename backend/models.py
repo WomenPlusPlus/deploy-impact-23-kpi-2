@@ -82,8 +82,8 @@ class User_Circle(db.Model):
 
     __tablename__ = 'user_circle'
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'), primary_key=True)
 
 
 
