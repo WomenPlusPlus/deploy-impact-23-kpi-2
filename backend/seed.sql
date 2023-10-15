@@ -22,25 +22,35 @@ CREATE TABLE users
 INSERT INTO users
     (first_name, last_name, display_name, email, user_login_name)
     VALUES 
-    (test, user, test_user_1, test@test.com, tester);
+    ('test', 'user', 'test_user_1', 'test@test.com', 'tester');
 
 CREATE TABLE circles (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL UNIQUE
 );
 
+INSERT INTO circles
+    (name)
+    VALUES 
+    ('test_circle');
+
 CREATE TABLE kpis (
   id SERIAL PRIMARY KEY,
   circle_id INTEGER REFERENCES circles,
   name TEXT NOT NULL UNIQUE,
   description TEXT NOT NULL,
-  visibility TEXT NOT NULL,
+  visibility TEXT,
   periodicity periodicity NOT NULL,
   unit unit NOT NULL,
   initial_value FLOAT NOT NULL,
   target_value FLOAT NOT NULL,
   active BOOLEAN NOT NULL DEFAULT true
 );
+
+INSERT INTO kpis
+    (circle_id,name, description, periodicity,unit,initial_value,target_value)
+    VALUES 
+    (1, 'HR KPI', 'share of teams constituted as circles', 'Monthly', '%',0,100);
 
 
 CREATE TABLE kpi_values (
