@@ -53,9 +53,9 @@ with app.app_context():
 def login_user():
     """Login Users"""
 
-    email = request.form.get('email')
+    user_email = request.form.get('email')
     try:
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=user_email).first()
         if user:
             access_token = create_access_token(identity=user.id)
             return jsonify(access_token=access_token, message='User Verified'), 200
@@ -75,7 +75,7 @@ def get_user(user_id):
     try:
         user = User.query.filter_by(id=user_id).first()
         if user.id == current_user:
-            return jsonify({'user':user}), 200
+            return jsonify({'user':user.to_dict()}), 200
         else:
             return jsonify(message='User Not Found'), 404
 
@@ -93,7 +93,7 @@ def get_circle(circle_id):
     try:
         circle = Circle.query.get_or_404(circle_id)
         if circle:
-            return jsonify({'circle': circle}),200
+            return jsonify({'circle': circle.to_dict()}),200
         else:
             return jsonify(message='Circle Not Found.'), 404
 
@@ -109,7 +109,8 @@ def fetch_circles():
     try:
         circles = Circle.query.all()
         if circles:
-            return jsonify({'circles': circles}), 200
+            circles_dict = [circle.to_dict() for circle in circles]
+            return jsonify({'circles': circles_dict}), 200
         else:
             return jsonify(message='Circles Not Found.'), 404
 
@@ -172,7 +173,7 @@ def get_kpi(kpi_id):
     try:
         kpi = Kpi.query.filter_by(id=kpi_id)
         if kpi:
-            return jsonify({'kpi': kpi}), 200
+            return jsonify({'kpi': kpi.to_dict()}), 200
         else:
             return jsonify(message='KPI Not Found.'), 404
 
@@ -187,7 +188,8 @@ def kpis_list():
     try:
         kpi_list = Kpi.query.all()
         if kpi_list:
-            return jsonify({'kpi_list':kpi_list}), 200
+            kpis_dict = [kpi.to_dict() for kpi in kpi_list]
+            return jsonify({'kpi_list':kpis_dict}), 200
         else:
             return jsonify(message='KPIs Not Found.'), 404
 

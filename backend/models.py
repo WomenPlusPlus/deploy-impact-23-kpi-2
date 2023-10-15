@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from enum import Enum, unique
-
+from sqlalchemy import func
 
 db = SQLAlchemy()
 
@@ -30,9 +30,20 @@ class User(db.Model):
     user_login_name = db.Column(db.String(250), nullable=False, unique=True)
     active = db.Column(db.Boolean, default=True)
 
-    created_kpi_values = db.relationship('kpi_values', foreign_keys='kpi_values.created_by_user_id', backref='created_by', lazy='dynamic')
-    updated_kpi_values = db.relationship('kpi_values', foreign_keys='kpi_values.updated_by_user_id', backref='updated_by', lazy='dynamic')
-    user_circle = db.relationship('user_circle', foreign_keys = 'user_circle.user_id', backref='user_id')
+    created_kpi_values = db.relationship('Kpi_Values', backref='created_by', foreign_keys='Kpi_Values.created_by_user_id')
+    updated_kpi_values = db.relationship('Kpi_Values', backref='updated_by', foreign_keys='Kpi_Values.updated_by_user_id')
+    user_circle = db.relationship('User_Circle', backref='user')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'display_name': self.display_name,
+            'email': self.email,
+            'user_login_name': self.user_login_name,
+            'active': self.active
+        }
 
 class Circle(db.Model):
     """Circles Table"""
@@ -42,7 +53,13 @@ class Circle(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), unique=True)
 
-    user_circle = db.relationship('user_circle', foreign_keys='user_circle.circle_id', backref='circle_id')
+    user_circle = db.relationship('User_Circle', backref='circle')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            }
 
 class Kpi(db.Model):
     """KPI's Table"""
@@ -60,7 +77,21 @@ class Kpi(db.Model):
     target_value = db.Column(db.Float, nullable = False)
     active = db.Column(db.Boolean, default=True)
 
-    kpi_values = db.relationship('kpi_values', foreign_keys='kpi_values.kpi_id', backref='kpi_id')
+    kpi_values = db.relationship('Kpi_Values', backref='kpi')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'circle_id': self.circle_id,
+            'name': self.name,
+            'description': self.description,
+            'visibility': self.visibility,
+            'periodicity': self.periodicity,
+            'unit':self.unit,
+            'initial_value':self.initial_value,
+            'target_value':self.target_value,
+            'active': self.active
+        }
 
 class Kpi_Values(db.Model):
     """Kpi Values Table"""
@@ -73,10 +104,23 @@ class Kpi_Values(db.Model):
     period_month = db.Column(db.Integer)
     value = db.Column(db.Float)
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.TIMESTAMP)
+    created_at = db.Column(db.TIMESTAMP, default=func.now())
     updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    updated_at = db.Column(db.TIMESTAMP)
+    updated_at = db.Column(db.TIMESTAMP, default=func.now(), onupdate=func.now())
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'kpi_id': self.kpi_id,
+            'period_year': self.period_year,
+            'period_month': self.period_month,
+            'value': self.value,
+            'created_by_user_id': self.created_by_user_id,
+            'created_at':self.created_at,
+            'updated_by_user_id':self.updated_by_user_id,
+            'updated_at':self.updated_at
+        }
+
 class User_Circle(db.Model):
     """Users_Circles Table"""
 
