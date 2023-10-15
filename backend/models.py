@@ -73,6 +73,11 @@ class Kpi(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
+<<<<<<< HEAD
+=======
+    description = db.Column(db.Text, nullable=False)
+    visibility = db.Column(db.Text, nullable=True)
+>>>>>>> 181d0df (update seed file)
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
     initial_value = db.Column(db.Float, default=0)
