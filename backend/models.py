@@ -53,7 +53,7 @@ class Kpi(db.Model):
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
     description = db.Column(db.Text, nullable=False)
-    visibility = db.Column(db.Text, nullable=False)
+    visibility = db.Column(db.Text, nullable=True)
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
     initial_value = db.Column(db.Float) #any default value?
