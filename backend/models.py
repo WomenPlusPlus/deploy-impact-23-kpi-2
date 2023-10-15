@@ -129,6 +129,7 @@ class User_Circle(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'), primary_key=True)
 
+<<<<<<< HEAD
 
     
 
@@ -147,6 +148,8 @@ class Change_Log(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     registered_at = db.Column(db.TIMESTAMP, default=func.now())
     activity = db.Column(db.Text)
+=======
+>>>>>>> 8607679 (update models.py)
 
     def to_dict(self):
         return {
