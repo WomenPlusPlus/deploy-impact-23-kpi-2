@@ -38,7 +38,7 @@ CREATE TABLE kpis (
   id SERIAL PRIMARY KEY,
   circle_id INTEGER REFERENCES circles,
   name TEXT NOT NULL UNIQUE,
-  description TEXT NOT NULL,
+--   description TEXT NOT NULL, REMOVE
   visibility TEXT,
   periodicity periodicity NOT NULL,
   unit unit NOT NULL,

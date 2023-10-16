@@ -69,11 +69,11 @@ class Kpi(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
-    description = db.Column(db.Text, nullable=False)
+    # description = db.Column(db.Text, nullable=False) REMOVE
     visibility = db.Column(db.Text, nullable=True)
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
-    initial_value = db.Column(db.Float) #any default value?
+    initial_value = db.Column(db.Float)
     target_value = db.Column(db.Float, nullable = False)
     active = db.Column(db.Boolean, default=True)
 
@@ -129,7 +129,10 @@ class User_Circle(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'), primary_key=True)
 
-
+class TokenBlocklist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, nullable=False)
 
 def connect_db(app):
     db.app = app
