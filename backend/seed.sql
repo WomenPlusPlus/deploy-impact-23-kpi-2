@@ -3,8 +3,8 @@ CREATE DATABASE kpi_db;
 
 \c kpi_db
 
-CREATE TYPE periodicity AS ENUM ('YEARLY', 'Quarterly', 'Monthly');
-CREATE TYPE unit AS ENUM ('CHF', '%', 'Amount', 'Score');
+CREATE TYPE periodicity AS ENUM ('yearly', 'quarterly', 'monthly');
+CREATE TYPE unit AS ENUM ('chf', 'percentage', 'amount', 'score');
 
 
 CREATE TABLE users
@@ -50,7 +50,7 @@ CREATE TABLE kpis (
 INSERT INTO kpis
     (circle_id,name, description, periodicity,unit,initial_value,target_value)
     VALUES 
-    (1, 'HR KPI', 'share of teams constituted as circles', 'Monthly', '%',0,100);
+    (1, 'HR KPI', 'share of teams constituted as circles', 'monthly', 'percentage',0,100);
 
 
 CREATE TABLE kpi_values (
