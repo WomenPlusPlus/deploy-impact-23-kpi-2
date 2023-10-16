@@ -171,7 +171,7 @@ def edit_kpis(kpi_id):
 def get_kpi(kpi_id):
      
     try:
-        kpi = Kpi.query.filter_by(id=kpi_id)
+        kpi = Kpi.query.filter_by(id=kpi_id).first()
         if kpi:
             return jsonify({'kpi': kpi.to_dict()}), 200
         else:

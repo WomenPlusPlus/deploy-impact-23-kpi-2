@@ -6,16 +6,16 @@ db = SQLAlchemy()
 
 @unique
 class Periodicity(Enum):
-    YEARLY = "YEARLY"
-    QUARTERLY = "Quarterly"
-    MONTHLY = "Monthly"
+    yearly = "Yearly"
+    quarterly = "Quarterly"
+    monthly = "Monthly"
 
 @unique
 class Unit(Enum):
-    UNIT1 = "CHF"
-    UNIT2 = "%"
-    UNIT3 = "Amount" #CHECK WITH ALINA
-    UNIT4 = 'Score'
+    chf = "CHF"
+    percentage = "%"
+    amount = "Amount" #CHECK WITH ALINA
+    score = 'Score'
 
 class User(db.Model):
     """Users Table"""
@@ -86,8 +86,8 @@ class Kpi(db.Model):
             'name': self.name,
             'description': self.description,
             'visibility': self.visibility,
-            'periodicity': self.periodicity,
-            'unit':self.unit,
+            'periodicity': self.periodicity.value,
+            'unit':self.unit.value,
             'initial_value':self.initial_value,
             'target_value':self.target_value,
             'active': self.active
