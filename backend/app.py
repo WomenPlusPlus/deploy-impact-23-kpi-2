@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-from models import db, connect_db, User, Circle, Kpi, Kpi_Values
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
-from datetime import datetime
+from models import db, connect_db, User, Circle, Kpi, TokenBlocklist
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import os
 
@@ -11,8 +11,10 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///kpi_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
+ACCESS_EXPIRES = timedelta(hours=1)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 jwt = JWTManager(app)
 
 CURR_USER_KEY = 'user_id'
@@ -24,30 +26,14 @@ with app.app_context():
 
 ##################
 # User Endpoints 
-# ------------------------------------
-# >>> STILL DEBATING USING FLASK SESSION DEPENDING ON WHERE THIS APP IS GOING
-# ------------------------------------
 
-# @app.before_request
-# def add_user_to_g():
-#     """Add Logged-In User to Flask Global"""
+# Callback function to check if a JWT exists in the database blocklist
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
+    jti = jwt_payload["jti"]
+    token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
 
-#     if CURR_USER_KEY in session:
-#         g.user = User.query.get(session[CURR_USER_KEY])
-
-#     else:
-#         g.user = None
-
-# def do_login(user):
-#     """Log User In """
-
-#     session[CURR_USER_KEY] = user.id
-
-# def do_logout():
-#     """Log User Out"""
-
-#     if CURR_USER_KEY in session:
-#         del session[CURR_USER_KEY]
+    return token is not None
 
 @app.route('/login', methods=['POST'])
 def login_user():
@@ -81,7 +67,23 @@ def get_user(user_id):
 
     except Exception as e:
         return jsonify(error=str(e)), 500
-        
+
+# Endpoint for revoking the current users access token. Saved the unique
+# identifier (jti) for the JWT into our database.
+@app.route("/logout", methods=["DELETE"])
+@jwt_required()
+def modify_token():
+    jti = get_jwt()["jti"]
+    now = datetime.now(timezone.utc)
+    db.session.add(TokenBlocklist(jti=jti, created_at=now))
+    db.session.commit()
+    return jsonify(msg="JWT revoked")
+
+## add users route
+## include user's circle
+
+
+# ADD USER LOGOUT ENDPOINT
 ##################
 # Circle Endpoints
 
@@ -207,8 +209,8 @@ def kpis_list():
 
 # @app.route('/kpis/<int:kpi_value_id>/edit', methods=['PUT'])
 # def edit_kpi_values():
-
-
+# the reset button should turn value to null
+#SEND DATA ABOUT THE KPI HISTORY
 
 if __name__ == '__main__':
     app.run()
