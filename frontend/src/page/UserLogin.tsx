@@ -3,6 +3,7 @@ import { AppBar, Button, Stack, Toolbar, Typography } from '@mui/material';
 import { ReactComponent as MicrosoftLogoSVG } from '../assets/Microsoft_logo.svg';
 import { loginRequest } from '../authConfig';
 import { ReactComponent as LogoSVG } from '../assets/Logo.svg';
+import { useNavigate } from 'react-router-dom';
 
 const styles = {
   toolbar: {
@@ -17,6 +18,7 @@ const UserLogin = () => {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/hooks.md
    */
   const { instance } = useMsal();
+  const navigate = useNavigate();
 
   const handleLoginPopup = () => {
     /**
@@ -29,6 +31,7 @@ const UserLogin = () => {
         ...loginRequest,
         redirectUri: '/redirect',
       })
+      .then(_ => navigate('/'))
       .catch(error => console.log(error));
   };
 
@@ -73,7 +76,7 @@ const UserLogin = () => {
             variant="outlined"
             onClick={handleLoginPopup}
           >
-            <MicrosoftLogoSVG style={{ marginRight: '12px' }} />
+            <MicrosoftLogoSVG style={{ marginRight: '4px' }} />
             Sign in with Microsoft
           </Button>
         </Stack>

@@ -4,7 +4,7 @@
  */
 
 import { MsalProvider } from '@azure/msal-react';
-
+import './App.css';
 import { IPublicClientApplication } from '@azure/msal-browser';
 import { useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material';
@@ -12,6 +12,9 @@ import { getDesignTokens } from './styles';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import UserLogin from './page/UserLogin';
 import MainLayout from './page/MainLayout';
+import GatekeeperKPICreate from './page/GatekeeperKPICreate';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const router = createBrowserRouter([
   {
@@ -19,8 +22,18 @@ const router = createBrowserRouter([
     element: <MainLayout />,
   },
   {
-    path: '/login',
+    path: 'login',
     element: <UserLogin />,
+  },
+  {
+    path: ':tabId',
+    element: <MainLayout />,
+    children: [
+      {
+        path: 'kpi/edit',
+        element: <GatekeeperKPICreate />,
+      },
+    ],
   },
 ]);
 
@@ -37,7 +50,9 @@ const App = ({ instance }: { instance: IPublicClientApplication }) => {
   return (
     <ThemeProvider theme={theme}>
       <MsalProvider instance={instance}>
-        <RouterProvider router={router} />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <RouterProvider router={router} />
+        </LocalizationProvider>
       </MsalProvider>
     </ThemeProvider>
   );

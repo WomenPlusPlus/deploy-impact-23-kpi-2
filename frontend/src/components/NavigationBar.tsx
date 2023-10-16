@@ -9,19 +9,23 @@ import {
   Avatar,
   Button,
   Divider,
-  IconButton,
   Menu,
   MenuItem,
   Stack,
+  Tab,
+  Tabs,
   Toolbar,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../utils/route';
 
-export const NavigationBar = () => {
+export const NavigationBar = ({ page }: { page: number }) => {
   const { instance } = useMsal();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   let activeAccount;
 
@@ -43,21 +47,27 @@ export const NavigationBar = () => {
       .catch(error => console.log(error));
   };
 
-  const handleLoginRedirect = () => {
-    instance.loginRedirect(loginRequest).catch(error => console.log(error));
-  };
+  // const handleLoginRedirect = () => {
+  //   instance.loginRedirect(loginRequest).catch(error => console.log(error));
+  // };
 
   const handleLogoutPopup = () => {
     instance
       .logoutPopup({
-        mainWindowRedirectUri: '/', // redirects the top level app after logout
+        mainWindowRedirectUri: '/login', // redirects after logout
         account: instance.getActiveAccount(),
       })
       .catch(error => console.log(error));
   };
 
-  const handleLogoutRedirect = () => {
-    instance.logoutRedirect().catch(error => console.log(error));
+  // const handleLogoutRedirect = () => {
+  //   instance.logoutRedirect().catch(error => console.log(error));
+  // };
+
+  const handleChangePage = (page: number) => {
+    if (0 <= page && page < routes.tab.length) {
+      navigate(`/${routes.tab[page]}`);
+    }
   };
 
   /**
@@ -71,25 +81,15 @@ export const NavigationBar = () => {
       sx={{ background: 'white' }}
     >
       <Toolbar>
-        <Stack
-          direction={'row'}
-          columnGap={'48px'}
-          ml={'48px'}
-          flexGrow={1}
+        <Tabs
+          value={page}
+          onChange={(_, newPage) => handleChangePage(newPage)}
+          sx={{ ml: '48px', flexGrow: 1 }}
         >
-          <Typography
-            fontSize={'20px'}
-            fontWeight={400}
-          >
-            Overview
-          </Typography>
-          <Typography
-            fontSize={'20px'}
-            fontWeight={400}
-          >
-            Activity
-          </Typography>
-        </Stack>
+          <Tab label="KPI Overview" />
+          <Tab label="Activity" />
+          <Tab label="GateKeeper Tools" />
+        </Tabs>
         <Stack
           direction={'row'}
           columnGap={'48px'}
@@ -97,12 +97,16 @@ export const NavigationBar = () => {
           flexGrow={0}
         >
           <AuthenticatedTemplate>
-            <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
+            <Button
+              onClick={e => setAnchorEl(e.currentTarget)}
+              variant="text"
+              sx={{ p: '8px 0px' }}
+            >
               <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
               <Typography>
                 {activeAccount ? activeAccount.name : 'Unknown'}
               </Typography>
-            </IconButton>
+            </Button>
             <Menu
               anchorEl={anchorEl}
               open={open}
@@ -113,9 +117,6 @@ export const NavigationBar = () => {
             >
               <MenuItem onClick={handleLogoutPopup}>pop up logout</MenuItem>
               <Divider />
-              <MenuItem onClick={handleLogoutRedirect}>
-                redirect logout
-              </MenuItem>
             </Menu>
           </AuthenticatedTemplate>
           <UnauthenticatedTemplate>
@@ -130,7 +131,6 @@ export const NavigationBar = () => {
             >
               <MenuItem onClick={handleLoginPopup}>pop up login</MenuItem>
               <Divider />
-              <MenuItem onClick={handleLoginRedirect}>redirect login</MenuItem>
             </Menu>
           </UnauthenticatedTemplate>
         </Stack>

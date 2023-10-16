@@ -3,14 +3,14 @@
  * Licensed under the MIT License.
  */
 
-import { LogLevel } from '@azure/msal-browser';
+import { Configuration, LogLevel } from '@azure/msal-browser';
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
  * For a full list of MSAL.js configuration parameters, visit:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
  */
-export const msalConfig = {
+export const msalConfig: Configuration = {
   auth: {
     clientId: 'c9c8419a-90e4-4471-b1d7-0a225017eef3', // This is the ONLY mandatory field that you need to supply.
     authority:
@@ -22,6 +22,7 @@ export const msalConfig = {
   cache: {
     cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
     storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+    claimsBasedCachingEnabled: false, // If true, access tokens will be cached under a key containing the hash of the requested claims string, resulting in a cache miss and new network token request when the same token request is made with different or missing claims. If set to false, tokens will be cached without claims, but all requests containing claims will go to the network and overwrite any previously cached token with the same scopes.
   },
   system: {
     loggerOptions: {
@@ -38,7 +39,7 @@ export const msalConfig = {
             console.error(message);
             return;
           case LogLevel.Info:
-            console.info(message);
+            // console.info(message);
             return;
           case LogLevel.Verbose:
             console.debug(message);
