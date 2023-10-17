@@ -30,6 +30,7 @@ class User(db.Model):
     user_login_name = db.Column(db.String(250), nullable=False, unique=True)
     active = db.Column(db.Boolean, default=True)
 
+    circles = db.relationship('Circle', secondary='user_circle', backref=('user'))
     created_kpi_values = db.relationship('Kpi_Values', backref='created_by', foreign_keys='Kpi_Values.created_by_user_id')
     updated_kpi_values = db.relationship('Kpi_Values', backref='updated_by', foreign_keys='Kpi_Values.updated_by_user_id')
     user_circle = db.relationship('User_Circle', backref='user')
@@ -54,6 +55,7 @@ class Circle(db.Model):
     name = db.Column(db.String(250), unique=True)
 
     user_circle = db.relationship('User_Circle', backref='circle')
+    
 
     def to_dict(self):
         return {
@@ -69,7 +71,6 @@ class Kpi(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
-    # description = db.Column(db.Text, nullable=False) REMOVE
     visibility = db.Column(db.Text, nullable=True)
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
@@ -84,7 +85,6 @@ class Kpi(db.Model):
             'id': self.id,
             'circle_id': self.circle_id,
             'name': self.name,
-            'description': self.description,
             'visibility': self.visibility,
             'periodicity': self.periodicity.value,
             'unit':self.unit.value,
