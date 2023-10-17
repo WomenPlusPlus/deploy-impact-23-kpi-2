@@ -124,8 +124,13 @@ export const NavigationBar = ({ page }: { page: number }) => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={handleLogoutPopup}>pop up logout</MenuItem>
-            <Divider />
+            <MenuItem>Profile settings</MenuItem>
+            <MenuItem
+              onClick={handleLogoutPopup}
+              sx={{ color: '#D63503' }}
+            >
+              Sign out
+            </MenuItem>
           </Menu>
         </Stack>
       </Toolbar>

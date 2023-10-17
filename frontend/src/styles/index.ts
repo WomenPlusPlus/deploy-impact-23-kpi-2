@@ -192,6 +192,15 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
         },
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          fontSize: '14px',
+          fontWeight: 500,
+          padding: '10px 14px',
+        },
+      },
+    },
     // ...(mode === 'light' ? {} : {}),
   },
   typography: {
