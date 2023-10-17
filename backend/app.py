@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
-from models import db, connect_db, User, Circle, Kpi, TokenBlocklist
+from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import os
+import ast
 
 load_dotenv()
 
@@ -61,12 +62,27 @@ def get_user(user_id):
     try:
         user = User.query.filter_by(id=user_id).first()
         if user.id == current_user:
-            return jsonify({'user':user.to_dict()}), 200
+            user_dict = user.to_dict()
+            user_dict['circles'] = [circle.to_dict() for circle in user.circles]
+            return jsonify({'user':user_dict}), 200
         else:
             return jsonify(message='User Not Found'), 404
 
     except Exception as e:
         return jsonify(error=str(e)), 500
+
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    """Fetches All Users"""
+
+    users = User.query.all()
+    user_list = []
+    for user in users:
+        user_dict = user.to_dict()  
+        user_dict['circles'] = [circle.circle.to_dict() for circle in user.user_circle]  # get user's circles
+        user_list.append(user_dict)
+    return jsonify(user_list)
 
 # Endpoint for revoking the current users access token. Saved the unique
 # identifier (jti) for the JWT into our database.
@@ -75,13 +91,17 @@ def get_user(user_id):
 def modify_token():
     jti = get_jwt()["jti"]
     now = datetime.now(timezone.utc)
-    db.session.add(TokenBlocklist(jti=jti, created_at=now))
-    db.session.commit()
-    return jsonify(msg="JWT revoked")
+    try:
+        db.session.add(TokenBlocklist(jti=jti, created_at=now))
+        db.session.commit()
+        return jsonify(msg="JWT revoked"), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
-## add users route
-## include user's circle
 
+# --------------------------------------------------------
+## DO WE NEED TO ADD AN ENDPOINT TO ADD USER TO A CIRCLE??
+# --------------------------------------------------------
 
 # ADD USER LOGOUT ENDPOINT
 ##################
@@ -135,8 +155,15 @@ def add_kpi_value(circle_id):
             return jsonify(message='KPI name already exists. Choose a different name.'), 400
         
         else:
-            data = request.form.to_dict()
+            data = request.form.copy()
             data['circle_id'] = circle_id
+            for key, value in data.items():
+                if key == 'active':
+                    data[key] = ast.literal_eval(value)
+                elif key == 'periodicity':
+                    data[key] = Periodicity[value.lower()]
+                elif key == 'unit':
+                    data[key] = Unit[value.lower()]
             new_kpi = Kpi(**data)
             db.session.add(new_kpi)
             db.session.commit()
@@ -158,8 +185,14 @@ def edit_kpis(kpi_id):
 
     else:
         try:
-            data = request.form.to_dict()
+            data = request.form
             for key, value in data.items():
+                if key == 'active':
+                    value = ast.literal_eval(value)
+                elif key == 'periodicity':
+                    value = Periodicity[value.lower()]
+                elif key == 'unit':
+                    value = Unit[value.lower()]
                 setattr(kpi, key, value)
             db.session.commit()
             return jsonify(message='KPI Updated Successfully'), 200

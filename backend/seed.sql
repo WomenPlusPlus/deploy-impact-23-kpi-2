@@ -38,7 +38,6 @@ CREATE TABLE kpis (
   id SERIAL PRIMARY KEY,
   circle_id INTEGER REFERENCES circles,
   name TEXT NOT NULL UNIQUE,
---   description TEXT NOT NULL, REMOVE
   visibility TEXT,
   periodicity periodicity NOT NULL,
   unit unit NOT NULL,
@@ -48,9 +47,9 @@ CREATE TABLE kpis (
 );
 
 INSERT INTO kpis
-    (circle_id,name, description, periodicity,unit,initial_value,target_value)
+    (circle_id,name, periodicity,unit,initial_value,target_value)
     VALUES 
-    (1, 'HR KPI', 'share of teams constituted as circles', 'monthly', 'percentage',0,100);
+    (1, 'HR KPI', 'monthly', 'percentage',0,100);
 
 
 CREATE TABLE kpi_values (
@@ -69,3 +68,11 @@ CREATE TABLE user_circle (
   user_id INTEGER REFERENCES users,
   circle_id INTEGER REFERENCES circles
 );
+
+WITH user_id AS (
+  SELECT id FROM users WHERE email = 'test@test.com'
+), circle_id AS (
+  SELECT id FROM circles WHERE name = 'test_circle'
+)
+INSERT INTO user_circle (user_id, circle_id)
+SELECT (SELECT id FROM user_id), (SELECT id FROM circle_id);
