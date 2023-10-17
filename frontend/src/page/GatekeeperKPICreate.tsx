@@ -23,6 +23,7 @@ import { ReactComponent as SaveIcon } from '../assets/Save.svg';
 import { ReactComponent as SuccessIcon } from '../assets/Check-circle.svg';
 import { useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Tooltip from '../components/Tooltip';
 
 const GatekeeperKPICreate = () => {
   const [createKPIsuccess, setCreateKPIsuccess] = useState(false);
@@ -56,14 +57,30 @@ const GatekeeperKPICreate = () => {
           >
             <TextField
               variant="standard"
-              label="KPI Type"
+              label={
+                <>
+                  Name
+                  <Tooltip
+                    title="Enter the unique name of the KPI to identify it easily on the dashboard. For example, 'Customer Satisfaction', 'Private Donations', etc."
+                    width="262px"
+                  />
+                </>
+              }
               placeholder="Name of new KPI Type"
-              required
               fullWidth
             />
+
             <TextField
               select
-              label="Period"
+              label={
+                <>
+                  Period
+                  <Tooltip
+                    title="Choose how often this KPI should be updated or reviewed. Options can range from monthly, quarterly, or annually. This helps in tracking the progress and performance over a specified time frame."
+                    width="378px"
+                  />
+                </>
+              }
               variant="standard"
               defaultValue={'quarter'}
               fullWidth
@@ -75,12 +92,19 @@ const GatekeeperKPICreate = () => {
           </Box>
           <TextField
             select
-            label="Circle"
+            label={
+              <>
+                Circle
+                <Tooltip
+                  title="Select the team responsible for this KPI. This helps in organising and assigning the KPIs to the appropriate teams for monitoring and management."
+                  width="288px"
+                />
+              </>
+            }
             variant="standard"
             placeholder="Select one"
             fullWidth
             defaultValue={'placeholder'}
-            required
           >
             <MenuItem
               disabled
@@ -91,7 +115,13 @@ const GatekeeperKPICreate = () => {
             </MenuItem>
           </TextField>
           <FormControl>
-            <FormLabel>Unit</FormLabel>
+            <FormLabel>
+              Unit
+              <Tooltip
+                title="Specify the unit used to measure this KPI. This provides context to the values and goals set for the performance indicator."
+                width="227px"
+              />
+            </FormLabel>
             <RadioGroup
               row
               sx={{ width: '80%' }}
@@ -130,14 +160,30 @@ const GatekeeperKPICreate = () => {
           >
             <TextField
               variant="standard"
-              label="Initial Value"
-              placeholder="00%"
+              label={
+                <>
+                  Initial Value
+                  <Tooltip
+                    title="Enter the starting value of the KPI. This is the baseline value from which progress or regression will be measured over time."
+                    width="226px"
+                  />
+                </>
+              }
+              placeholder="00"
               fullWidth
             />
             <TextField
               variant="standard"
-              label="Target Value"
-              placeholder="00%"
+              label={
+                <>
+                  Target Value
+                  <Tooltip
+                    title="Input the desired value you aim to achieve for this KPI within the specified period. This sets a clear goal for the team to work towards."
+                    width="247px"
+                  />
+                </>
+              }
+              placeholder="00"
               fullWidth
             />
           </Box>

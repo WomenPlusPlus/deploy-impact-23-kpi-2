@@ -1,28 +1,37 @@
-import {
-  AuthenticatedTemplate,
-  UnauthenticatedTemplate,
-  useMsal,
-} from '@azure/msal-react';
-import { loginRequest } from '../authConfig';
+import { useMsal } from '@azure/msal-react';
 import {
   AppBar,
   Avatar,
+  Box,
   Button,
   Divider,
+  Drawer,
+  FormControl,
+  FormLabel,
+  IconButton,
   Menu,
   MenuItem,
   Stack,
   Tab,
   Tabs,
+  TextField,
   Toolbar,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../utils/route';
+import { ReactComponent as AddIcon } from '../assets/Plus-circle.svg';
+import { DatePicker } from '@mui/x-date-pickers';
+import { ReactComponent as CancelIcon } from '../assets/X-circle.svg';
+import { ReactComponent as SaveIcon } from '../assets/Save.svg';
+import CloseIcon from '@mui/icons-material/Close';
+import { globalStyles } from '../styles';
+import Tooltip from './Tooltip';
 
 export const NavigationBar = ({ page }: { page: number }) => {
   const { instance } = useMsal();
+  const [insertKPI, setInsertKPI] = useState<Record<string, any> | undefined>();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -32,20 +41,6 @@ export const NavigationBar = ({ page }: { page: number }) => {
   if (instance) {
     activeAccount = instance.getActiveAccount();
   }
-
-  const handleLoginPopup = () => {
-    /**
-     * When using popup and silent APIs, we recommend setting the redirectUri to a blank page or a page
-     * that does not implement MSAL. Keep in mind that all redirect routes must be registered with the application
-     * For more information, please follow this link: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/login-user.md#redirecturi-considerations
-     */
-    instance
-      .loginPopup({
-        ...loginRequest,
-        redirectUri: '/redirect',
-      })
-      .catch(error => console.log(error));
-  };
 
   // const handleLoginRedirect = () => {
   //   instance.loginRedirect(loginRequest).catch(error => console.log(error));
@@ -70,11 +65,10 @@ export const NavigationBar = ({ page }: { page: number }) => {
     }
   };
 
-  /**
-   * Most applications will need to conditionally render certain components based on whether a user is signed in or not.
-   * msal-react provides 2 easy ways to do this. AuthenticatedTemplate and UnauthenticatedTemplate components will
-   * only render their children if a user is authenticated or unauthenticated, respectively.
-   */
+  const submitInsertKPI = () => {
+    setInsertKPI(undefined);
+  };
+
   return (
     <AppBar
       elevation={0}
@@ -92,49 +86,160 @@ export const NavigationBar = ({ page }: { page: number }) => {
         </Tabs>
         <Stack
           direction={'row'}
-          columnGap={'48px'}
+          columnGap={'24px'}
           mr={'48px'}
           flexGrow={0}
+          alignItems={'center'}
         >
-          <AuthenticatedTemplate>
-            <Button
-              onClick={e => setAnchorEl(e.currentTarget)}
-              variant="text"
-              sx={{ p: '8px 0px' }}
+          <Button
+            variant="contained"
+            sx={globalStyles.buttonTinySize}
+            onClick={() => setInsertKPI({})}
+          >
+            <AddIcon />
+            Insert KPI Value
+          </Button>
+          <Button
+            onClick={e => setAnchorEl(e.currentTarget)}
+            variant="text"
+            sx={{ p: '8px 0px' }}
+          >
+            <Avatar
+              sx={{ width: 32, height: 32 }}
+              alt={activeAccount ? activeAccount.name : 'Unknown'}
+              src="/not-supported.jpg"
+            />
+            <Typography
+              fontSize={'14px'}
+              fontWeight={400}
             >
-              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-              <Typography>
-                {activeAccount ? activeAccount.name : 'Unknown'}
-              </Typography>
-            </Button>
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={() => setAnchorEl(null)}
-              onClick={() => setAnchorEl(null)}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleLogoutPopup}>pop up logout</MenuItem>
-              <Divider />
-            </Menu>
-          </AuthenticatedTemplate>
-          <UnauthenticatedTemplate>
-            <Button onClick={e => setAnchorEl(e.currentTarget)}>Log In</Button>
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={() => setAnchorEl(null)}
-              onClick={() => setAnchorEl(null)}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleLoginPopup}>pop up login</MenuItem>
-              <Divider />
-            </Menu>
-          </UnauthenticatedTemplate>
+              {activeAccount ? activeAccount.name : 'Unknown'}
+            </Typography>
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => setAnchorEl(null)}
+            onClick={() => setAnchorEl(null)}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={handleLogoutPopup}>pop up logout</MenuItem>
+            <Divider />
+          </Menu>
         </Stack>
       </Toolbar>
+      <Drawer
+        open={!!insertKPI}
+        anchor="right"
+        onClose={() => setInsertKPI(undefined)}
+      >
+        <Box
+          display={'flex'}
+          justifyContent={'flex-end'}
+          pt={'12px'}
+        >
+          <IconButton onClick={() => setInsertKPI(undefined)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Stack
+          sx={{
+            pb: '12px',
+            px: '48px',
+            alignItems: 'flex-start',
+            rowGap: '40px',
+            width: '503px', // TODO: remove
+          }}
+        >
+          <Typography
+            fontSize={'24px'}
+            fontWeight={500}
+          >
+            Input KPI value
+          </Typography>
+          <Stack
+            rowGap={'24px'}
+            width={'100%'}
+          >
+            <TextField
+              select
+              variant="standard"
+              label="Circle"
+              defaultValue={'placeholder'}
+              fullWidth
+            >
+              <MenuItem
+                disabled
+                value={'placeholder'}
+                sx={{ display: 'none' }}
+              >
+                Select one
+              </MenuItem>
+            </TextField>
+            <TextField
+              select
+              variant="standard"
+              label="KPI Name"
+              defaultValue={'placeholder'}
+              fullWidth
+            >
+              <MenuItem
+                disabled
+                value={'placeholder'}
+                sx={{ display: 'none' }}
+              >
+                Select one
+              </MenuItem>
+            </TextField>
+            <FormControl>
+              <FormLabel>
+                Period
+                <Tooltip
+                  title="The date range to which this KPI value belongs."
+                  width="278px"
+                />
+              </FormLabel>
+              <DatePicker
+                views={['month', 'year']}
+                format="mm.yyyy"
+                slotProps={{
+                  textField: { variant: 'standard', fullWidth: true },
+                }}
+              />
+            </FormControl>
+            <TextField
+              variant="standard"
+              label="Value"
+              placeholder={'00'}
+              required
+              fullWidth
+            />
+          </Stack>
+          <Stack
+            direction={'row'}
+            justifyContent={'space-between'}
+            width={'100%'}
+          >
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setInsertKPI(undefined)}
+            >
+              <CancelIcon />
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={submitInsertKPI}
+              size="small"
+            >
+              <SaveIcon />
+              Save new KPI value
+            </Button>
+          </Stack>
+        </Stack>
+      </Drawer>
     </AppBar>
   );
 };

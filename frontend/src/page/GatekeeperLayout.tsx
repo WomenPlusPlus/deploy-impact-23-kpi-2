@@ -14,6 +14,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 const styles: Record<string, SxProps> = {
   container: {
     p: '16px',
+    // display: 'flex',
   },
   containerTitle: {
     fontSize: '18px',
@@ -43,7 +44,11 @@ const GatekeeperLayout = ({ isDashboard }: { isDashboard: boolean }) => {
             </Typography>
             ]
           </Breadcrumbs>
-          <Grid container>
+          <Grid
+            container
+            columnSpacing={'32px'}
+            marginLeft={'-16px'}
+          >
             <Grid
               item
               md={6}
@@ -73,8 +78,46 @@ const GatekeeperLayout = ({ isDashboard }: { isDashboard: boolean }) => {
             </Grid>
             <Grid
               item
-              md={6}
-            ></Grid>
+              md={3}
+              sx={styles.container}
+            >
+              <Typography sx={styles.containerTitle}>
+                Circle Management
+              </Typography>
+              <Stack
+                direction={'row'}
+                columnGap={'32px'}
+              >
+                <Button
+                  variant="outlined"
+                  sx={styles.button}
+                >
+                  <CreateNewKPIIcon />
+                  Circle Overview
+                </Button>
+              </Stack>
+            </Grid>
+            <Grid
+              item
+              md={3}
+              sx={styles.container}
+            >
+              <Typography sx={styles.containerTitle}>
+                User Management
+              </Typography>
+              <Stack
+                direction={'row'}
+                columnGap={'32px'}
+              >
+                <Button
+                  variant="outlined"
+                  sx={styles.button}
+                >
+                  <CreateNewKPIIcon />
+                  User Overview
+                </Button>
+              </Stack>
+            </Grid>
           </Grid>
         </>
       ) : (
