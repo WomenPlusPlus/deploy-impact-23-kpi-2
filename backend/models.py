@@ -14,7 +14,7 @@ class Periodicity(Enum):
 class Unit(Enum):
     chf = "CHF"
     percentage = "%"
-    amount = "Amount" #CHECK WITH ALINA
+    amount = "Amount"
     score = 'Score'
 
 class User(db.Model):
