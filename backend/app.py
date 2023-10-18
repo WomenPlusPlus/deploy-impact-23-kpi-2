@@ -45,7 +45,8 @@ def login_user():
         user = User.query.filter_by(email=user_email).first()
         if user:
             access_token = create_access_token(identity=user.id)
-            return jsonify(access_token=access_token, message='User Verified'), 200
+            # test if userId is sent
+            return jsonify(access_token=access_token, message='User Verified', user_id=user.id), 200 
         else:
             return jsonify(message='User Not Found'), 404
 
@@ -103,7 +104,7 @@ def modify_token():
 ## DO WE NEED TO ADD AN ENDPOINT TO ADD USER TO A CIRCLE??
 # --------------------------------------------------------
 
-# ADD USER LOGOUT ENDPOINT
+
 ##################
 # Circle Endpoints
 
@@ -146,7 +147,7 @@ def fetch_circles():
 @app.route('/circles/<int:circle_id>/kpis/add', methods=['POST'])
 @jwt_required()
 def add_kpi_value(circle_id):
-
+# receive circle id in the body
     kpi_name = request.form.get('name')
     try:
         kpi = Kpi.query.filter_by(name = kpi_name).first()
@@ -177,7 +178,7 @@ def add_kpi_value(circle_id):
 @app.route('/kpis/<int:kpi_id>/edit', methods=['PUT'])
 @jwt_required()
 def edit_kpis(kpi_id):
-    
+    # receive circle id in the body
     kpi = Kpi.query.filter_by(id=kpi_id).first()
 
     if not kpi:
@@ -204,7 +205,7 @@ def edit_kpis(kpi_id):
 @app.route('/kpis/<int:kpi_id>', methods=['GET'])
 @jwt_required()
 def get_kpi(kpi_id):
-     
+     # receive circle id in the body
     try:
         kpi = Kpi.query.filter_by(id=kpi_id).first()
         if kpi:
@@ -219,6 +220,7 @@ def get_kpi(kpi_id):
 @app.route('/kpis', methods=['GET'])
 @jwt_required()
 def kpis_list():
+# receive circle id in the body
 
     try:
         kpi_list = Kpi.query.all()
@@ -238,12 +240,48 @@ def kpis_list():
 # @app.route('/kpis/<int:kpi_id>/kpi_values/<int:kpi_value_id>/add', methods=['POST'])
 # def add_kpi_values(kpi_value_id):
 #     # check first: if kpi.active == true 
-#     
+# receive circle_id, kpi_id, period-month, period-year, value
+#     send michael all kpi_values based circle and kpi
 
 # @app.route('/kpis/<int:kpi_value_id>/edit', methods=['PUT'])
 # def edit_kpi_values():
 # the reset button should turn value to null
-#SEND DATA ABOUT THE KPI HISTORY
+# receive kpi_value_id, value
+
+
+
+# get request for kpi values based on circle and kpi SPECIFIC KPI_VALUES ID
+
+# get request for kpi values based on circle and kpi ALL
+
+
+# ------------------------------------
+# 
+
+#create  /OVERVIEW KPI - search endpoint from to :  FOR EACH CIRCLE, PER PERIOD, FOR ALL KPIs and all kpi_values
+
+#mini change log : receive kpi_values_id
+    # send recent 3 values
+
+#change log endpoint: 
+    # receive circle_id, 'from' and 'to'
+    # send response:
+        # kpi name & username
+        # value = db.Column(db.Float)
+        # created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+        # created_at = db.Column(db.TIMESTAMP, default=func.now())
+        # updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+        # updated_at = db.Column(db.TIMESTAMP, default=func.now(), onupdate=func.now())
+# ---------------------------------------      
+# create a table for kpi_value use history table
+#     KPI HISTORY DB TABLE
+
+        # - id
+        # - kpi_value_id
+        # - user_id
+        # - timestamp
+        # - activity (insert/new=0, updated=1)
+# ---------------------------------------
 
 if __name__ == '__main__':
     app.run()
