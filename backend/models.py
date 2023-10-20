@@ -30,7 +30,6 @@ class User(db.Model):
     user_login_name = db.Column(db.String(250), nullable=False, unique=True)
     active = db.Column(db.Boolean, default=True)
 
-    circles = db.relationship('Circle', secondary='user_circle', backref=('user'))
     created_kpi_values = db.relationship('Kpi_Values', backref='created_by', foreign_keys='Kpi_Values.created_by_user_id')
     updated_kpi_values = db.relationship('Kpi_Values', backref='updated_by', foreign_keys='Kpi_Values.updated_by_user_id')
     user_circle = db.relationship('User_Circle', backref='user')
@@ -54,8 +53,9 @@ class Circle(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), unique=True)
 
-    user_circle = db.relationship('User_Circle', backref='circle')
-    
+ 
+    circle_user = db.relationship('User_Circle', backref='circle')
+
 
     def to_dict(self):
         return {
@@ -128,6 +128,9 @@ class User_Circle(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'), primary_key=True)
+
+
+    
 
 class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
