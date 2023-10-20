@@ -46,7 +46,7 @@ def login_user():
         if user:
             access_token = create_access_token(identity=user.id)
             # test if userId is sent
-            return jsonify(access_token=access_token, message='User Verified', user_id=user.id), 200 
+            return jsonify(access_token=access_token, user_id=user.id), 200 
         else:
             return jsonify(message='User Not Found'), 404
 
