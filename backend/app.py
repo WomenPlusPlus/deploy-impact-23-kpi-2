@@ -45,7 +45,7 @@ def login_user():
         user = User.query.filter_by(email=user_email).first()
         if user:
             access_token = create_access_token(identity=user.id)
-            # test if userId is sent
+            
             return jsonify(access_token=access_token, user_id=user.id), 200 
         else:
             return jsonify(message='User Not Found'), 404
@@ -90,6 +90,8 @@ def get_users():
 @app.route("/logout", methods=["DELETE"])
 @jwt_required()
 def modify_token():
+    """Logs User Out"""
+    
     jti = get_jwt()["jti"]
     now = datetime.now(timezone.utc)
     try:
@@ -98,11 +100,6 @@ def modify_token():
         return jsonify(msg="JWT revoked"), 200
     except Exception as e:
         return jsonify(error=str(e)), 500
-
-
-# --------------------------------------------------------
-## DO WE NEED TO ADD AN ENDPOINT TO ADD USER TO A CIRCLE??
-# --------------------------------------------------------
 
 
 ##################
@@ -114,7 +111,7 @@ def get_circle(circle_id):
     """Fetches a Circle by its ID"""
 
     try:
-        circle = Circle.query.get_or_404(circle_id)
+        circle = Circle.query.filter_by(id=circle_id).first()
         if circle:
             return jsonify({'circle': circle.to_dict()}),200
         else:
@@ -144,11 +141,12 @@ def fetch_circles():
 ##################
 # kpis Endpoints
 
-@app.route('/circles/<int:circle_id>/kpis/add', methods=['POST'])
+@app.route('/kpis/add', methods=['POST'])
 @jwt_required()
-def add_kpi_value(circle_id):
-# receive circle id in the body
-    kpi_name = request.form.get('name')
+def add_kpi_value():
+
+    json_data = request.get_json()
+    kpi_name = json_data.get('name')
     try:
         kpi = Kpi.query.filter_by(name = kpi_name).first()
 
@@ -156,8 +154,8 @@ def add_kpi_value(circle_id):
             return jsonify(message='KPI name already exists. Choose a different name.'), 400
         
         else:
-            data = request.form.copy()
-            data['circle_id'] = circle_id
+            data = request.get_json()
+           
             for key, value in data.items():
                 if key == 'active':
                     data[key] = ast.literal_eval(value)
@@ -178,7 +176,7 @@ def add_kpi_value(circle_id):
 @app.route('/kpis/<int:kpi_id>/edit', methods=['PUT'])
 @jwt_required()
 def edit_kpis(kpi_id):
-    # receive circle id in the body
+    
     kpi = Kpi.query.filter_by(id=kpi_id).first()
 
     if not kpi:
@@ -186,7 +184,7 @@ def edit_kpis(kpi_id):
 
     else:
         try:
-            data = request.form
+            data = request.get_json()
             for key, value in data.items():
                 if key == 'active':
                     value = ast.literal_eval(value)
@@ -205,7 +203,7 @@ def edit_kpis(kpi_id):
 @app.route('/kpis/<int:kpi_id>', methods=['GET'])
 @jwt_required()
 def get_kpi(kpi_id):
-     # receive circle id in the body
+    
     try:
         kpi = Kpi.query.filter_by(id=kpi_id).first()
         if kpi:
@@ -273,7 +271,7 @@ def kpis_list():
         # updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
         # updated_at = db.Column(db.TIMESTAMP, default=func.now(), onupdate=func.now())
 # ---------------------------------------      
-# create a table for kpi_value use history table
+# create a table in models.py for kpi_value use history table
 #     KPI HISTORY DB TABLE
 
         # - id
