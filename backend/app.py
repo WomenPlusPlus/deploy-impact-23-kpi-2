@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit
+from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
@@ -91,7 +91,7 @@ def get_users():
 @jwt_required()
 def modify_token():
     """Logs User Out"""
-    
+
     jti = get_jwt()["jti"]
     now = datetime.now(timezone.utc)
     try:
@@ -144,6 +144,7 @@ def fetch_circles():
 @app.route('/kpis/add', methods=['POST'])
 @jwt_required()
 def add_kpi_value():
+    """Add New KPI"""
 
     json_data = request.get_json()
     kpi_name = json_data.get('name')
@@ -176,7 +177,8 @@ def add_kpi_value():
 @app.route('/kpis/<int:kpi_id>/edit', methods=['PUT'])
 @jwt_required()
 def edit_kpis(kpi_id):
-    
+    """Update A KPI"""
+
     kpi = Kpi.query.filter_by(id=kpi_id).first()
 
     if not kpi:
@@ -203,7 +205,8 @@ def edit_kpis(kpi_id):
 @app.route('/kpis/<int:kpi_id>', methods=['GET'])
 @jwt_required()
 def get_kpi(kpi_id):
-    
+    """Get A KPI by ID"""
+
     try:
         kpi = Kpi.query.filter_by(id=kpi_id).first()
         if kpi:
@@ -218,8 +221,7 @@ def get_kpi(kpi_id):
 @app.route('/kpis', methods=['GET'])
 @jwt_required()
 def kpis_list():
-# receive circle id in the body
-
+    """Get All KPIs"""
     try:
         kpi_list = Kpi.query.all()
         if kpi_list:
@@ -235,14 +237,62 @@ def kpis_list():
 ##################
 # kpi_values Endpoints
 
-# @app.route('/kpis/<int:kpi_id>/kpi_values/<int:kpi_value_id>/add', methods=['POST'])
-# def add_kpi_values(kpi_value_id):
-#     # check first: if kpi.active == true 
+@app.route('/kpi_values/add', methods=['POST'])
+@jwt_required()
+def add_kpi_values():
+    """Add New KPI Value"""
+
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    kpi_id = data.get('kpi_id')
+    try:
+        # Check if a Kpi record with the given name and circle_id exists
+        kpi = Kpi.query.filter_by(id=kpi_id).first()
+       
+        if not kpi:
+            return jsonify(message="KPI doesn't exist")
+
+        else:
+            new_value = Kpi_Values(**data)
+            new_value.created_by_user_id = user_id
+            new_value.updated_at = None
+            db.session.add(new_value)
+            db.session.commit()
+            return jsonify(message="KPI Value was added successfully"),201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# AN ENDPOINT TO SHOW ALL VALUES AND SUPPORT FILTERING
+@app.route('/kpi_values', methods=['GET'])
+@jwt_required()
+def get_all_values():
+    """Get All KPI Values"""
+# NOT DONE YET
+    data = request.args
+    # period = 
+
+    circle_id = data.get('circle_id')
+    circle = Circle.query.filter_by(id=circle_id)
+    if circle:
+        try:
+            kpi_values_list = Kpi_Values.query.join(Kpi).filter(Kpi.circle_id == circle_id).all()
+            if not kpi_values_list:
+                return jsonify(message='No Values available')
+            if kpi_values_list:
+                values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
+                return jsonify({'KPI Values': values_dict}), 200
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+
 # receive circle_id, kpi_id, period-month, period-year, value
 #     send michael all kpi_values based circle and kpi
 
 # @app.route('/kpis/<int:kpi_value_id>/edit', methods=['PUT'])
 # def edit_kpi_values():
+# check first: if kpi.active == true 
 # the reset button should turn value to null
 # receive kpi_value_id, value
 
@@ -270,6 +320,8 @@ def kpis_list():
         # created_at = db.Column(db.TIMESTAMP, default=func.now())
         # updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
         # updated_at = db.Column(db.TIMESTAMP, default=func.now(), onupdate=func.now())
+
+
 # ---------------------------------------      
 # create a table in models.py for kpi_value use history table
 #     KPI HISTORY DB TABLE

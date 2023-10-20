@@ -105,7 +105,7 @@ class Kpi_Values(db.Model):
     value = db.Column(db.Float)
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.TIMESTAMP, default=func.now())
-    updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     updated_at = db.Column(db.TIMESTAMP, default=func.now(), onupdate=func.now())
     
     def to_dict(self):
