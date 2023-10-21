@@ -40,9 +40,10 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
 def login_user():
     """Login Users"""
 
-    user_email = request.form.get('email')
+    data = request.get_json()
+    email=data["email"]
     try:
-        user = User.query.filter_by(email=user_email).first()
+        user = User.query.filter_by(email=email).first()
         if user:
             access_token = create_access_token(identity=user.id)
             
@@ -256,11 +257,12 @@ def add_kpi_values():
             new_value = Kpi_Values(**data)
             new_value.created_by_user_id = user_id
             new_value.updated_at = None
-            db.session.add(new_value)
+            kpi.kpi_values.append(new_value)
             db.session.commit()
             return jsonify(message="KPI Value was added successfully"),201
 
     except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
 # AN ENDPOINT TO SHOW ALL VALUES AND SUPPORT FILTERING
@@ -270,17 +272,16 @@ def get_all_values():
     """Get All KPI Values"""
 # NOT DONE YET
     data = request.args
-    # period = 
-
+    
     circle_id = data.get('circle_id')
-    circle = Circle.query.filter_by(id=circle_id)
+    circle = Circle.query.filter_by(id=circle_id).first()
     if circle:
         try:
             kpi_values_list = Kpi_Values.query.join(Kpi).filter(Kpi.circle_id == circle_id).all()
             if not kpi_values_list:
                 return jsonify(message='No Values available')
             if kpi_values_list:
-                values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
+                values_dict = [kpi_value.to_dict() for kpi_value in kpi_values_list]
                 return jsonify({'KPI Values': values_dict}), 200
 
         except Exception as e:
