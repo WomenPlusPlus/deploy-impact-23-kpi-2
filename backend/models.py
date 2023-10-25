@@ -29,7 +29,8 @@ class User(db.Model):
     email = db.Column(db.String(250), nullable=False, unique=True)
     user_login_name = db.Column(db.String(250), nullable=False, unique=True)
     active = db.Column(db.Boolean, default=True)
-
+    # Add is gatekeeper T/f > economist cant access kpis creation, edit
+    #add it to to_dict()
     created_kpi_values = db.relationship('Kpi_Values', backref='created_by', foreign_keys='Kpi_Values.created_by_user_id')
     updated_kpi_values = db.relationship('Kpi_Values', backref='updated_by', foreign_keys='Kpi_Values.updated_by_user_id')
     user_circle = db.relationship('User_Circle', backref='user')
@@ -71,7 +72,6 @@ class Kpi(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
-    visibility = db.Column(db.Text, nullable=True)
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
     initial_value = db.Column(db.Float, default=0)
@@ -85,7 +85,6 @@ class Kpi(db.Model):
             'id': self.id,
             'circle_id': self.circle_id,
             'name': self.name,
-            'visibility': self.visibility,
             'periodicity': self.periodicity.value,
             'unit':self.unit.value,
             'initial_value':self.initial_value,
@@ -136,6 +135,26 @@ class TokenBlocklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.String(36), nullable=False, index=True)
     created_at = db.Column(db.DateTime, nullable=False)
+
+class Change_Log(db.Model):
+    """Change Log Table"""
+
+    __tablename_ = 'change_logs'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    kpi_value_id = db.Column(db.Integer, db.ForeignKey('kpi_values.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    registered_at = db.Column(db.TIMESTAMP, default=func.now())
+    activity = db.Column(db.text, nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'kpi_value_id': self.kpi_value_id,
+            'user_id': self.user_id,
+            'registered_at': self.registered_at,
+            'activity': self.activity
+        }
 
 def connect_db(app):
     db.app = app
