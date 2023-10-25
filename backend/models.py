@@ -74,7 +74,7 @@ class Kpi(db.Model):
     visibility = db.Column(db.Text, nullable=True)
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
-    initial_value = db.Column(db.Float)
+    initial_value = db.Column(db.Float, default=0)
     target_value = db.Column(db.Float, nullable = False)
     active = db.Column(db.Boolean, default=True)
 

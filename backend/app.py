@@ -5,6 +5,8 @@ from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import os
 import ast
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 load_dotenv()
 
@@ -121,6 +123,14 @@ def get_circle(circle_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/circles/add', methods=['POST'])
+@jwt_required()
+def add_circles():
+    data = request.get_json()
+    new_circle = Circle(**data)
+    db.session.add(new_circle)
+    db.session.commit()
+    return jsonify(message='Circle added')
 
 @app.route('/circles', methods=['GET'])
 @jwt_required()
@@ -254,9 +264,7 @@ def add_kpi_values():
             return jsonify(message="KPI doesn't exist")
 
         else:
-            new_value = Kpi_Values(**data)
-            new_value.created_by_user_id = user_id
-            new_value.updated_at = None
+            new_value = Kpi_Values(**data, created_by_user_id=user_id, updated_at=None)
             kpi.kpi_values.append(new_value)
             db.session.commit()
             return jsonify(message="KPI Value was added successfully"),201
@@ -266,18 +274,295 @@ def add_kpi_values():
         return jsonify({'error': str(e)}), 500
 
 # AN ENDPOINT TO SHOW ALL VALUES AND SUPPORT FILTERING
+# @app.route('/kpi_values', methods=['GET'])
+# @jwt_required()
+# def get_all_values():
+#     """Get All KPI Values"""
+# #create  /OVERVIEW KPI - search endpoint from to :  FOR EACH CIRCLE, PER PERIOD, FOR ALL KPIs and all kpi_values
+# # /GET /kpi values based on circle and kpi ALL > #if no circles were specified > return all circles
+# # SEND BACK KPI VALUES + KPI COLUMNS
+#     data = request.args
+#     circle_id = data.get('circle_id')
+#     period = data.get('period')
+    
+
+#     # Define date ranges based on the selected period
+#     end_date = date.today()
+#     start_date = date(end_date.year, 1, 1)
+#     current_quarter = (end_date.month - 1) // 3 + 1
+#     current_year = end_date.year
+    
+#     if period == 'this_month':
+#         start_date = end_date.replace(day=1)
+#     elif period == 'last_month':
+#         start_date = (end_date - relativedelta(months=1)).replace(day=1)
+#         end_date = end_date.replace(day=1) - timedelta(days=1)
+#     elif period == 'this_quarter':
+#         # Calculate the current quarter and year
+#         quarter_start_date = date(current_year, (current_quarter - 1) * 3 + 1, 1)
+#         quarter_end_date = (quarter_start_date + relativedelta(months=3)) - relativedelta(days=1)
+        
+#     elif period == 'last_quarter':
+#         # Calculate the current quarter and year
+#         current_quarter = (end_date.month - 1) // 3 + 1
+#         current_year = end_date.year
+        
+#         # Calculate the first day of the previous quarter
+#         previous_quarter_start = date(current_year, (current_quarter - 2) * 3 + 1, 1)
+        
+#         # Calculate the last day of the previous quarter
+#         previous_quarter_end = (previous_quarter_start + relativedelta(months=3)) - relativedelta(days=1)
+
+#         # Update start_date and end_date to the previous quarter
+#         start_date = previous_quarter_start
+#         end_date = previous_quarter_end
+#         print(f"Start Date: {start_date}")
+#         print(f"End Date: {end_date}")
+#     # Calculate the end date of the previous quarter
+    
+#     elif period == 'this_year':
+#         start_year = end_date.year
+#         end_year = end_date.year
+
+#         if circle_id:
+#             kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                 Kpi.circle_id == circle_id,
+#                 Kpi_Values.period_year >= start_year,
+#                 Kpi_Values.period_year <= end_year
+#             ).all()
+#         else:
+#             kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                 Kpi_Values.period_year >= start_year,
+#                 Kpi_Values.period_year <= end_year
+#             ).all()
+#     elif period == 'last_year':
+#         start_year = end_date.year - 1
+#         end_year = end_date.year - 1
+
+#         if circle_id:
+#             kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                 Kpi.circle_id == circle_id,
+#                 Kpi_Values.period_year >= start_year,
+#                 Kpi_Values.period_year <= end_year
+#             ).all()
+#         else:
+#             kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                 Kpi_Values.period_year >= start_year,
+#                 Kpi_Values.period_year <= end_year
+#             ).all()
+#     if circle_id:
+#         try:
+#             # Get all Kpi instances associated with the circle_id
+#             kpis = Kpi.query.filter_by(circle_id=circle_id).all()
+#             if not kpis:
+#                 return jsonify(message='No KPIs available for the circle')
+
+#             # Get all Kpi_Values associated with the Kpi instances within the date range
+#             kpi_values_list = []
+#             for kpi in kpis:
+#                 kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                     Kpi.circle_id == circle_id,
+#                     Kpi_Values.created_at >= start_date,
+#                     Kpi_Values.created_at <= end_date
+#                 ).all()
+#                 kpi_values_list.extend(kpi_values)
+
+#             if not kpi_values_list:
+#                 return jsonify(message='No Values available')
+#             if kpi_values_list:
+#                 values_dict = [kpi_value.to_dict() for kpi_value in kpi_values_list]
+#                 return jsonify({'KPI Values': values_dict}), 200
+
+#         except Exception as e:
+#             return jsonify({'error': str(e)}), 500
+#     else:
+#         kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                     Kpi_Values.created_at >= start_date,
+#                     Kpi_Values.created_at <= end_date
+#                 ).all()
+#         if kpi_values:
+#             values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
+#             return jsonify({'KPI Values': values_dict}), 200
+#         else:
+#             return jsonify(message='No Values available')
+# @app.route('/kpi_values', methods=['GET'])
+# @jwt_required()
+# def get_all_values():
+#     data = request.args
+#     circle_id = data.get('circle_id')
+#     period = data.get('period')
+
+#     # Define date ranges based on the selected period
+#     end_date = date.today()
+#     start_date = date(end_date.year, 1, 1)
+#     current_quarter = (end_date.month - 1) // 3 + 1
+#     current_year = end_date.year
+
+#     if period == 'this_month':
+#         start_date = end_date.replace(day=1)
+#     elif period == 'last_month':
+#         start_date = (end_date - relativedelta(months=1)).replace(day=1)
+#         end_date = end_date.replace(day=1) - timedelta(days=1)
+#     elif period == 'this_quarter':
+#         current_quarter = (end_date.month - 1) // 3 + 1
+#         current_year = end_date.year
+
+#         # Calculate the first day of the current quarter
+#         quarter_start_date = date(current_year, (current_quarter - 1) * 3 + 1, 1)
+
+#         # Calculate the last day of the current quarter
+#         quarter_end_date = (quarter_start_date + relativedelta(months=3)) - timedelta(days=1)
+
+#         # Set start_year and end_year to the current year
+#         start_year = current_year
+#         end_year = current_year
+
+#         # Update start_date and end_date to the current quarter
+#         start_date = quarter_start_date
+#         end_date = quarter_end_date
+#     elif period == 'last_quarter':
+#         current_quarter = (end_date.month - 1) // 3 + 1
+#         current_year = end_date.year
+#         previous_quarter_start = date(current_year, (current_quarter - 2) * 3 + 1, 1)
+#         previous_quarter_end = (previous_quarter_start + relativedelta(months=3)) - relativedelta(days=1)
+#         start_date = previous_quarter_start
+#         end_date = previous_quarter_end
+
+#     if period == 'this_year':
+#         start_year = end_date.year
+#         end_year = end_date.year
+
+#     elif period == 'last_year':
+#         start_year = end_date.year - 1
+#         end_year = end_date.year - 1
+
+#     if circle_id:
+#         try:
+#             kpis = Kpi.query.filter_by(circle_id=circle_id).all()
+#             if not kpis:
+#                 return jsonify(message='No KPIs available for the circle')
+
+#             kpi_values_list = []
+#             for kpi in kpis:
+#                 kpi_values = Kpi_Values.query.join(Kpi).filter(
+#                     Kpi.circle_id == circle_id,
+#                     Kpi_Values.period_year >= start_year,
+#                     Kpi_Values.period_year <= end_year
+#                 ).all()
+#                 kpi_values_list.extend(kpi_values)
+
+#             if not kpi_values_list:
+#                 return jsonify(message='No Values available')
+#             if kpi_values_list:
+#                 values_dict = [kpi_value.to_dict() for kpi_value in kpi_values_list]
+#                 return jsonify({'KPI Values': values_dict}), 200
+
+#         except Exception as e:
+#             return jsonify({'error': str(e)}), 500
+#     else:
+#         kpi_values = Kpi_Values.query.join(Kpi).filter(
+#             Kpi_Values.period_year >= start_year,
+#             Kpi_Values.period_year <= end_year
+#         ).all()
+#         if kpi_values:
+#             values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
+#             return jsonify({'KPI Values': values_dict}), 200
+#         else:
+#             return jsonify(message='No Values available')
+
+
 @app.route('/kpi_values', methods=['GET'])
 @jwt_required()
 def get_all_values():
-    """Get All KPI Values"""
-# NOT DONE YET
     data = request.args
-    
     circle_id = data.get('circle_id')
-    circle = Circle.query.filter_by(id=circle_id).first()
-    if circle:
+    period = data.get('period')
+
+    quarters = {
+    1: [1, 2, 3],
+    2: [4, 5, 6],
+    3: [7, 8, 9],
+    4: [10, 11, 12]
+    }
+
+    # Define date ranges based on the selected period
+    end_date = date.today()
+    start_date = date(end_date.year, 1, 1)
+    current_month = end_date.month
+
+    if period == 'this_month':
+        start_date = end_date.replace(day=1)
+    elif period == 'last_month':
+        start_date = (end_date - relativedelta(months=1)).replace(day=1)
+        end_date = end_date.replace(day=1) - timedelta(days=1)
+    elif period == 'this_quarter':
+        for quarter, months in quarters.items():
+            if current_month in months:
+                quarter_start_date = date(end_date.year, months[0], 1)
+                start_date = quarter_start_date
+                end_date = quarter_start_date + relativedelta(months=3) - timedelta(days=1)
+                break
+    elif period == 'last_quarter':
+        for quarter, months in quarters.items():
+            if current_month in months:
+                last_quarter = quarter - 1 if quarter > 1 else 4
+                last_quarter_start_date = date(end_date.year, quarters[last_quarter][0], 1)
+                last_quarter_end_date = last_quarter_start_date + relativedelta(months=3) - timedelta(days=1)
+                start_date = last_quarter_start_date
+                end_date = last_quarter_end_date
+                break
+    elif period == 'this_year':
+        start_date = date(end_date.year, 1, 1)
+    elif period == 'last_year':
+        start_date = date(end_date.year - 1, 1, 1)
+        end_date = date(end_date.year - 1, 12, 31)
+
+    if not circle_id and not period:
+        kpi_values = Kpi_Values.query.all()
+        if kpi_values:
+            values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
+            return jsonify({'KPI Values': values_dict}), 200
+        else:
+            return jsonify(message='No Values available')
+
+    
+    if not circle_id:
+        # Logic for filtering KPI Values without specifying a circle
+        kpi_values = Kpi_Values.query.join(Kpi).filter(
+            Kpi_Values.period_year >= start_date.year,
+            Kpi_Values.period_year <= end_date.year,
+            Kpi_Values.period_month >= start_date.month,
+            Kpi_Values.period_month <= end_date.month
+        ).all()
+
+        if kpi_values:
+            values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
+            return jsonify({'KPI Values': values_dict}), 200
+        else:
+            return jsonify(message='No Values available')
+
+    if circle_id:
         try:
-            kpi_values_list = Kpi_Values.query.join(Kpi).filter(Kpi.circle_id == circle_id).all()
+            kpis = Kpi.query.filter_by(circle_id=circle_id).all()
+            if not kpis:
+                return jsonify(message='No KPIs available for the circle')
+
+            kpi_values_list = []
+            for kpi in kpis:
+                if period is None:
+                    kpi_values = Kpi_Values.query.filter(
+                        Kpi_Values.kpi_id == kpi.id
+                    ).all()
+                else:
+                    kpi_values = Kpi_Values.query.filter(
+                        Kpi_Values.kpi_id == kpi.id,
+                        Kpi_Values.period_year >= start_date.year,
+                        Kpi_Values.period_year <= end_date.year,
+                        Kpi_Values.period_month >= start_date.month,
+                        Kpi_Values.period_month <= end_date.month
+                    ).all()
+                kpi_values_list.extend(kpi_values)
+
             if not kpi_values_list:
                 return jsonify(message='No Values available')
             if kpi_values_list:
@@ -286,11 +571,8 @@ def get_all_values():
 
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    
 
-# receive circle_id, kpi_id, period-month, period-year, value
-#     send michael all kpi_values based circle and kpi
-
+# --------------------------------------
 # @app.route('/kpis/<int:kpi_value_id>/edit', methods=['PUT'])
 # def edit_kpi_values():
 # check first: if kpi.active == true 
@@ -298,30 +580,30 @@ def get_all_values():
 # receive kpi_value_id, value
 
 
+# --------------------------------------
+# /GET param= kpi_values_id
+#FOR: mini change log : receive kpi_values_id
+    # send recent 3 values
+# --------------------------------------
 
-# get request for kpi values based on circle and kpi SPECIFIC KPI_VALUES ID
 
-# get request for kpi values based on circle and kpi ALL
+# --------------------------------------
+
+# ENDPOINT
+# /GET /kpi values based on PARAM:circle_ID and kpi_ID > SEND: SPECIFIC KPI_VALUES
+
+# ------------------------------------
 
 
 # ------------------------------------
-# 
-
-#create  /OVERVIEW KPI - search endpoint from to :  FOR EACH CIRCLE, PER PERIOD, FOR ALL KPIs and all kpi_values
-
-#mini change log : receive kpi_values_id
-    # send recent 3 values
-
 #change log endpoint: 
     # receive circle_id, 'from' and 'to'
     # send response:
-        # kpi name & username
-        # value = db.Column(db.Float)
-        # created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-        # created_at = db.Column(db.TIMESTAMP, default=func.now())
-        # updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-        # updated_at = db.Column(db.TIMESTAMP, default=func.now(), onupdate=func.now())
-
+        # kpi name & username > needed
+        # value = db.Column(db.Float) > needed
+        # activity: created - updated
+        # timestamp: when action took place
+# -------------------------------------
 
 # ---------------------------------------      
 # create a table in models.py for kpi_value use history table
