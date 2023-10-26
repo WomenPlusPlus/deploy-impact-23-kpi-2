@@ -397,11 +397,28 @@ def get_all_values():
             return jsonify({'error': str(e)}), 500
 
 # --------------------------------------
-# @app.route('/kpis/<int:kpi_value_id>/edit', methods=['PUT'])
-# def edit_kpi_values():
-# check first: if kpi.active == true 
-# the reset button should turn value to null
-# receive kpi_value_id, value
+@app.route('/kpi_values/<int:kpi_value_id>/edit', methods=['PUT'])
+@jwt_required()
+def edit_kpi_values(kpi_value_id):
+    # receive kpi_value_id, value
+    data = request.get_json()
+    kpi_new_values = data.get('value')
+    
+    try:
+        kpi_value = Kpi_Values.query.filter_by(id=kpi_value_id).first()
+        kpi_id = kpi_value.kpi_id
+        kpi = Kpi.query.filter_by(id=kpi_id).first()
+        if not kpi.active:
+            return jsonify(message='Kpi is not active. Cannot be updated'), 403
+        else:
+            kpi_value.value = kpi_new_values
+            db.session.commit()
+            return jsonify(message='KPI Values Updated Successfully'), 200
+    
+    except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
 
 
 # --------------------------------------
