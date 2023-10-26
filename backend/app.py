@@ -7,6 +7,7 @@ import os
 import ast
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -19,6 +20,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 jwt = JWTManager(app)
+CORS(app, origins=['http://localhost:3000'])
 
 CURR_USER_KEY = 'user_id'
 
