@@ -29,8 +29,8 @@ class User(db.Model):
     email = db.Column(db.String(250), nullable=False, unique=True)
     user_login_name = db.Column(db.String(250), nullable=False, unique=True)
     active = db.Column(db.Boolean, default=True)
-    # Add is gatekeeper T/f > economist cant access kpis creation, edit
-    #add it to to_dict()
+    is_gatekeeper = db.Column(db.Boolean, default=False)
+    
     created_kpi_values = db.relationship('Kpi_Values', backref='created_by', foreign_keys='Kpi_Values.created_by_user_id')
     updated_kpi_values = db.relationship('Kpi_Values', backref='updated_by', foreign_keys='Kpi_Values.updated_by_user_id')
     user_circle = db.relationship('User_Circle', backref='user')
@@ -43,7 +43,8 @@ class User(db.Model):
             'display_name': self.display_name,
             'email': self.email,
             'user_login_name': self.user_login_name,
-            'active': self.active
+            'active': self.active,
+            'is_gatekeeper': self.is_gatekeeper
         }
 
 class Circle(db.Model):
@@ -139,13 +140,13 @@ class TokenBlocklist(db.Model):
 class Change_Log(db.Model):
     """Change Log Table"""
 
-    __tablename_ = 'change_logs'
+    __tablename__ = 'change_logs'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     kpi_value_id = db.Column(db.Integer, db.ForeignKey('kpi_values.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     registered_at = db.Column(db.TIMESTAMP, default=func.now())
-    activity = db.Column(db.text, nullable=False)
+    activity = db.Column(db.Text)
 
     def to_dict(self):
         return {

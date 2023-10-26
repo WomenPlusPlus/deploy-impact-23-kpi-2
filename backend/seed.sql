@@ -16,14 +16,15 @@ CREATE TABLE users
   display_name TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   user_login_name TEXT NOT NULL UNIQUE,
-  active BOOLEAN NOT NULL DEFAULT true
+  active BOOLEAN NOT NULL DEFAULT true,
+  is_gatekeeper BOOLEAN NOT NULL DEFAULT false
 );
 
 INSERT INTO users
-    (first_name, last_name, display_name, email, user_login_name)
+    (first_name, last_name, display_name, email, user_login_name, active, is_gatekeeper)
     VALUES 
-    ('test', 'user', 'test_user_1', 'test@test.com', 'tester');
-
+    ('test', 'user', 'test_user_1', 'test@test.com', 'tester', false, false),
+    ('martin', 'po', 'Martin', 'martin@test.com', 'Martin-PO', True, True);
 CREATE TABLE circles (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL UNIQUE
@@ -38,7 +39,6 @@ CREATE TABLE kpis (
   id SERIAL PRIMARY KEY,
   circle_id INTEGER REFERENCES circles,
   name TEXT NOT NULL UNIQUE,
-  visibility TEXT,
   periodicity periodicity NOT NULL,
   unit unit NOT NULL,
   initial_value FLOAT NOT NULL,
