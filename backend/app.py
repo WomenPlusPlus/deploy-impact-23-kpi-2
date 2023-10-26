@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values
+from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values, Change_Log
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
@@ -283,12 +283,42 @@ def add_kpi_values():
         else:
             new_value = Kpi_Values(**data, created_by_user_id=user_id, updated_at=None)
             kpi.kpi_values.append(new_value)
+            new_value_id = new_value.id
+            log_entry = Change_Log(kpi_value_id=new_value_id, user_id=user_id, activity='Created')
+            db.session.add(log_entry)
             db.session.commit()
             return jsonify(message="KPI Value was added successfully"),201
 
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/kpi_values/<int:kpi_value_id>/edit', methods=['PUT'])
+@jwt_required()
+def edit_kpi_values(kpi_value_id):
+    """Edit Kpi Value"""
+
+    data = request.get_json()
+    kpi_new_values = data.get('value')
+    user_id = get_jwt_identity()
+    try:
+        kpi_value = Kpi_Values.query.filter_by(id=kpi_value_id).first()
+        kpi_id = kpi_value.kpi_id
+        kpi = Kpi.query.filter_by(id=kpi_id).first()
+        if not kpi.active:
+            return jsonify(message='Kpi is not active. Cannot be updated'), 403
+        else:
+            kpi_value.value = kpi_new_values
+            log_entry = Change_Log(kpi_value_id=kpi_value_id, user_id=user_id, activity='Updated')
+            db.session.add(log_entry)
+            db.session.commit()
+            return jsonify(message='KPI Values Updated Successfully'), 200
+    
+    except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
 
 # an endpoint to fetch all kpi values and supports filtering
 @app.route('/kpi_values', methods=['GET'])
@@ -396,28 +426,6 @@ def get_all_values():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-# --------------------------------------
-@app.route('/kpi_values/<int:kpi_value_id>/edit', methods=['PUT'])
-@jwt_required()
-def edit_kpi_values(kpi_value_id):
-    # receive kpi_value_id, value
-    data = request.get_json()
-    kpi_new_values = data.get('value')
-    
-    try:
-        kpi_value = Kpi_Values.query.filter_by(id=kpi_value_id).first()
-        kpi_id = kpi_value.kpi_id
-        kpi = Kpi.query.filter_by(id=kpi_id).first()
-        if not kpi.active:
-            return jsonify(message='Kpi is not active. Cannot be updated'), 403
-        else:
-            kpi_value.value = kpi_new_values
-            db.session.commit()
-            return jsonify(message='KPI Values Updated Successfully'), 200
-    
-    except Exception as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
 
 
 
