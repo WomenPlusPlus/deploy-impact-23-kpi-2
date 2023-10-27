@@ -23,7 +23,7 @@ CREATE TABLE users
 INSERT INTO users
     (first_name, last_name, display_name, email, user_login_name, active, is_gatekeeper)
     VALUES 
-    ('test', 'user', 'test_user_1', 'test@test.com', 'tester', false, false),
+    ('test', 'user', 'test_user_1', 'test@test.com', 'tester', True, false),
     ('martin', 'po', 'Martin', 'martin@test.com', 'Martin-PO', True, True);
 CREATE TABLE circles (
   id SERIAL PRIMARY KEY,
@@ -69,6 +69,7 @@ CREATE TABLE user_circle (
   circle_id INTEGER REFERENCES circles
 );
 
+
 WITH user_id AS (
   SELECT id FROM users WHERE email = 'test@test.com'
 ), circle_id AS (
@@ -76,3 +77,12 @@ WITH user_id AS (
 )
 INSERT INTO user_circle (user_id, circle_id)
 SELECT (SELECT id FROM user_id), (SELECT id FROM circle_id);
+
+
+CREATE TABLE change_logs (
+    id SERIAL PRIMARY KEY,
+    kpi_value_id INTEGER REFERENCES kpi_values,
+    user_id INTEGER REFERENCES users,
+    registered_at TIMESTAMP NOT NULL,
+    activity TEXT NOT NULL
+)
