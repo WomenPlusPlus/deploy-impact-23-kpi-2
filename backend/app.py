@@ -47,6 +47,7 @@ def login_user():
     data = request.get_json()
     email=data["email"]
     try:
+        # add condition: if not user.active > cant login
         user = User.query.filter_by(email=email).first()
         if user:
             access_token = create_access_token(identity=user.id)
@@ -64,12 +65,13 @@ def login_user():
 def get_user(user_id):
     """Fetches a user's details"""
 
-    current_user = get_jwt_identity()
     try:
         user = User.query.filter_by(id=user_id).first()
-        if user.id == current_user:
+        # fix bug
+        #check behaviour when user is not active, send a response for that as well
+        if user:
             user_dict = user.to_dict()
-            user_dict['circles'] = [circle.to_dict() for circle in user.circles]
+            user_dict['circles'] = [user_circle.circle.to_dict() for user_circle in user.user_circle]
             return jsonify({'user':user_dict}), 200
         else:
             return jsonify(message='User Not Found'), 404
@@ -284,6 +286,7 @@ def add_kpi_values():
             new_value = Kpi_Values(**data, created_by_user_id=user_id, updated_at=None)
             kpi.kpi_values.append(new_value)
             new_value_id = new_value.id
+            # NEEDS TESTING
             log_entry = Change_Log(kpi_value_id=new_value_id, user_id=user_id, activity='Created')
             db.session.add(log_entry)
             db.session.commit()
@@ -310,6 +313,7 @@ def edit_kpi_values(kpi_value_id):
             return jsonify(message='Kpi is not active. Cannot be updated'), 403
         else:
             kpi_value.value = kpi_new_values
+            # NEEDS TESTING
             log_entry = Change_Log(kpi_value_id=kpi_value_id, user_id=user_id, activity='Updated')
             db.session.add(log_entry)
             db.session.commit()
@@ -435,16 +439,10 @@ def get_all_values():
     # send recent 3 values
 # --------------------------------------
 
-
-# --------------------------------------
-
 # ENDPOINT
 # /GET /kpi values based on PARAM:circle_ID and kpi_ID > SEND: SPECIFIC KPI_VALUES
-
 # ------------------------------------
 
-
-# ------------------------------------
 #change log endpoint: 
     # receive circle_id, 'from' and 'to'
     # send response:
