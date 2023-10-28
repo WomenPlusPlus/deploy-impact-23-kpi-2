@@ -47,15 +47,20 @@ def login_user():
     data = request.get_json()
     email=data["email"]
     try:
-        # add condition: if not user.active > cant login
+        
         user = User.query.filter_by(email=email).first()
-        if user:
-            access_token = create_access_token(identity=user.id)
-            
-            return jsonify(access_token=access_token, user_id=user.id), 200 
-        else:
+
+        if not user:
             return jsonify(message='User Not Found'), 404
 
+        elif not user.active:
+            return jsonify(message='User is not active. Unauthorized Access'), 403
+            
+        else:
+            access_token = create_access_token(identity=user.id)
+            user_dict = user.to_dict()
+            return jsonify(access_token=access_token, user=user_dict), 200 
+    
     except Exception as e:
         return jsonify(error= str(e)), 500
    
@@ -67,15 +72,17 @@ def get_user(user_id):
 
     try:
         user = User.query.filter_by(id=user_id).first()
-        # fix bug
+        if not user:
+            return jsonify(message='User Not Found'), 404
         #check behaviour when user is not active, send a response for that as well
-        if user:
+        elif not user.active:
+            return jsonify(message='User is not active. Unauthorized Access'), 403
+        
+        else:
             user_dict = user.to_dict()
             user_dict['circles'] = [user_circle.circle.to_dict() for user_circle in user.user_circle]
             return jsonify({'user':user_dict}), 200
-        else:
-            return jsonify(message='User Not Found'), 404
-
+            
     except Exception as e:
         return jsonify(error=str(e)), 500
 
@@ -277,6 +284,8 @@ def add_kpi_values():
     kpi_id = data.get('kpi_id')
     try:
         # Check if a Kpi record with the given name and circle_id exists
+        # check if the kpi_value of the same kpi_id, period_month, period_year exists 
+        # in the database, when adding a new kpi_value
         kpi = Kpi.query.filter_by(id=kpi_id).first()
        
         if not kpi:
