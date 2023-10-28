@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values, Change_Log
+from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values, Change_Log, User_Circle
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
@@ -8,6 +8,8 @@ import ast
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from flask_cors import CORS
+from sqlalchemy import and_
+import calendar
 
 load_dotenv()
 
@@ -71,10 +73,11 @@ def get_user(user_id):
     """Fetches a user's details"""
 
     try:
+
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return jsonify(message='User Not Found'), 404
-        #check behaviour when user is not active, send a response for that as well
+        
         elif not user.active:
             return jsonify(message='User is not active. Unauthorized Access'), 403
         
@@ -294,8 +297,9 @@ def add_kpi_values():
         else:
             new_value = Kpi_Values(**data, created_by_user_id=user_id, updated_at=None)
             kpi.kpi_values.append(new_value)
+            db.session.commit()
             new_value_id = new_value.id
-            # NEEDS TESTING
+      
             log_entry = Change_Log(kpi_value_id=new_value_id, user_id=user_id, activity='Created')
             db.session.add(log_entry)
             db.session.commit()
@@ -322,7 +326,7 @@ def edit_kpi_values(kpi_value_id):
             return jsonify(message='Kpi is not active. Cannot be updated'), 403
         else:
             kpi_value.value = kpi_new_values
-            # NEEDS TESTING
+           
             log_entry = Change_Log(kpi_value_id=kpi_value_id, user_id=user_id, activity='Updated')
             db.session.add(log_entry)
             db.session.commit()
@@ -333,11 +337,10 @@ def edit_kpi_values(kpi_value_id):
             return jsonify({'error': str(e)}), 500
 
 
-# an endpoint to fetch all kpi values and supports filtering
 @app.route('/kpi_values', methods=['GET'])
 @jwt_required()
 def get_all_values():
-    """Get KPI Values"""
+    """Get KPI Values - Supports Filtering Period and Circle Id"""
 
     data = request.args
     circle_id = data.get('circle_id')
@@ -388,9 +391,9 @@ def get_all_values():
         kpi_values = Kpi_Values.query.all()
         if kpi_values:
             values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
-            return jsonify({'KPI_Values': values_dict}), 200
+            return jsonify({'KPI Values': values_dict}), 200
         else:
-            return jsonify(message='No Values available')
+            return jsonify(message='No Values Available'), 204
 
     if not circle_id:
         # Logic for filtering KPI Values without specifying a circle
@@ -403,16 +406,16 @@ def get_all_values():
 
         if kpi_values:
             values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
-            return jsonify({'KPI_Values': values_dict}), 200
+            return jsonify({'KPI Values': values_dict}), 200
         else:
-            return jsonify(message='No Values available')
+            return jsonify(message='No Values Available'), 204
 
     
     if circle_id:
         try:
             kpis = Kpi.query.filter_by(circle_id=circle_id).all()
             if not kpis:
-                return jsonify(message='No KPIs available for the circle')
+                return jsonify(message='No KPIs available for the circle'), 204
 
             kpi_values_list = []
             for kpi in kpis:
@@ -431,26 +434,77 @@ def get_all_values():
                 kpi_values_list.extend(kpi_values)
 
             if not kpi_values_list:
-                return jsonify(message='No Values available')
+                return jsonify(message='No Values Available'), 204
             if kpi_values_list:
                 values_dict = [kpi_value.to_dict() for kpi_value in kpi_values_list]
-                return jsonify({'KPI_Values': values_dict}), 200
+                return jsonify({'KPI Values': values_dict}), 200
 
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
 
+@app.route('/kpi_values/change_log', methods=["GET"])
+@jwt_required()
+def get_change_log():
+    """Fetch All Change Logs for Kpi Values"""
+    
+    data = request.args
+    circle_id = data.get('circle_id')
+    from_year = data.get('from_year')
+    from_month = data.get('from_month')
+    to_month = data.get('to_month')
+    to_year = data.get('to_year')
+    
+    # Parse from_year and from_month into a datetime for the start date
+    date_from = datetime(int(from_year), int(from_month), 1)
 
+   # Calculate the last day of the to_month
+    _, to_month_last_day = calendar.monthrange(int(to_year), int(to_month))
 
+    date_to = datetime(int(to_year), int(to_month), to_month_last_day)
+    
+    try:
+   
+        results = (
+        db.session.query(
+            Kpi_Values.value,
+            Kpi.name.label('kpi_name'),
+            User.display_name.label('username'),
+            Change_Log.activity,
+            Change_Log.registered_at
+        )
+        .join(Kpi, Kpi_Values.kpi_id == Kpi.id)
+        .join(Circle, Kpi.circle_id == Circle.id)
+        .join(User, Kpi_Values.created_by_user_id == User.id)
+        .join(Change_Log, Kpi_Values.id == Change_Log.kpi_value_id)
+        .filter(Circle.id == circle_id)  
+        .filter(Change_Log.registered_at >= date_from)  
+        .filter(Change_Log.registered_at <= date_to)  
+        .all()
+    )
+
+        if len(results) == 0:
+            return jsonify(message='No Logs Available'), 200
+
+        logs_dict = [
+            {
+                'value': result[0],
+                'kpi_name': result[1],
+                'username': result[2],
+                'activity': result[3],
+                'registered_at': result[4]
+            }
+            for result in results
+        ]
+        return jsonify(change_log=logs_dict), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 # --------------------------------------
 # /GET param= kpi_values_id
 #FOR: mini change log : receive kpi_values_id
     # send recent 3 values
 # --------------------------------------
-
-# ENDPOINT
-# /GET /kpi values based on PARAM:circle_ID and kpi_ID > SEND: SPECIFIC KPI_VALUES
-# ------------------------------------
 
 #change log endpoint: 
     # receive circle_id, 'from' and 'to'
