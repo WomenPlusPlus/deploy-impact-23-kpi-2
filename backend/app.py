@@ -447,7 +447,7 @@ def get_all_values():
 @jwt_required()
 def get_change_log():
     """Fetch All Change Logs for Kpi Values"""
-    
+
     data = request.args
     circle_id = data.get('circle_id')
     from_year = data.get('from_year')
@@ -505,15 +505,23 @@ def get_change_log():
 #FOR: mini change log : receive kpi_values_id
     # send recent 3 values
 # --------------------------------------
+@app.route('/kpi_values/<int:kpi_values_id>/change_log', methods=['GET'])
+@jwt_required()
+def get_mini_log(kpi_values_id):
+    """Get 3 Most Recent Change Log Entries"""
 
-#change log endpoint: 
-    # receive circle_id, 'from' and 'to'
-    # send response:
-        # kpi name & username > needed
-        # value = db.Column(db.Float) > needed
-        # activity: created - updated
-        # timestamp: when action took place
-# -------------------------------------
+    try:
+        results = Change_Log.query.filter_by(kpi_value_id=kpi_values_id).order_by(Change_Log.registered_at.desc()).limit(3).all()
+
+        if not results:
+            return jsonify(message='No Logs Available'), 200
+
+        else:
+            dict_results = [result.to_dict() for result in results]
+            return jsonify(mini_change_log= dict_results), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
