@@ -285,6 +285,9 @@ def add_kpi_values():
     data = request.get_json()
     user_id = get_jwt_identity()
     kpi_id = data.get('kpi_id')
+    period_year = data.get('period_year')
+    period_month = data.get('period_month')
+
     try:
         # Check if a Kpi record with the given name and circle_id exists
         # check if the kpi_value of the same kpi_id, period_month, period_year exists 
@@ -292,18 +295,27 @@ def add_kpi_values():
         kpi = Kpi.query.filter_by(id=kpi_id).first()
        
         if not kpi:
-            return jsonify(message="KPI doesn't exist")
+            return jsonify(message="KPI doesn't exist"), 404
 
-        else:
-            new_value = Kpi_Values(**data, created_by_user_id=user_id, updated_at=None)
-            kpi.kpi_values.append(new_value)
-            db.session.commit()
-            new_value_id = new_value.id
-      
-            log_entry = Change_Log(kpi_value_id=new_value_id, user_id=user_id, activity='Created')
-            db.session.add(log_entry)
-            db.session.commit()
-            return jsonify(message="KPI Value was added successfully"),201
+        # Check if a Kpi_Values record with the same kpi_id, period_month, and period_year exists
+        existing_kpi_value = Kpi_Values.query.filter_by(
+            kpi_id=kpi_id,
+            period_year=period_year,
+            period_month=period_month
+        ).first()
+
+        if existing_kpi_value:
+            return jsonify(message="KPI Value already exists for this period"), 400
+
+        new_value = Kpi_Values(**data, created_by_user_id=user_id, updated_at=None)
+        kpi.kpi_values.append(new_value)
+        db.session.commit()
+        new_value_id = new_value.id
+    
+        log_entry = Change_Log(kpi_value_id=new_value_id, user_id=user_id, activity='Created')
+        db.session.add(log_entry)
+        db.session.commit()
+        return jsonify(message="KPI Value was added successfully"),201
 
     except Exception as e:
         db.session.rollback()
@@ -386,7 +398,6 @@ def get_all_values():
         start_date = date(end_date.year - 1, 1, 1)
         end_date = date(end_date.year - 1, 12, 31)
 
-   
     if not circle_id and not period:
         kpi_values = Kpi_Values.query.all()
         if kpi_values:
@@ -410,7 +421,6 @@ def get_all_values():
         else:
             return jsonify(message='No Values Available'), 204
 
-    
     if circle_id:
         try:
             kpis = Kpi.query.filter_by(circle_id=circle_id).all()
@@ -500,11 +510,7 @@ def get_change_log():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-# --------------------------------------
-# /GET param= kpi_values_id
-#FOR: mini change log : receive kpi_values_id
-    # send recent 3 values
-# --------------------------------------
+
 @app.route('/kpi_values/<int:kpi_values_id>/change_log', methods=['GET'])
 @jwt_required()
 def get_mini_log(kpi_values_id):
@@ -522,7 +528,6 @@ def get_mini_log(kpi_values_id):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run()
