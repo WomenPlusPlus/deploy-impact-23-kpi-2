@@ -918,15 +918,15 @@ def metricsViz(inputDict):
                 }
             ],
             legend: {
-                top: 'bottom',
-                type: 'scroll',  // Enable scrolling for long legend lists
-                padding: [5, 10], // Top and right padding for legend items
-                orient: 'vertical',
-                left: 'right',  // Position legend to the right side of the chart
-                top: 'middle',  // Center align vertically
+                show: true,
+                top: 35,  // Adjust this value based on the actual height of your title
+                type: 'scroll',
+                padding: [5, 10],
+                orient: 'horizontal',  // Change the orientation to horizontal
+                left: 'center',        // Center the legend
                 textStyle: {
                     fontSize: 10  // Adjusted the legend font size here
-                }
+                },
             },
             tooltip: {
                 trigger: 'item',
@@ -951,7 +951,7 @@ def metricsViz(inputDict):
                 name: 'KPIs Progress',
                 type: 'pie',
                 radius: [20, 150],
-                center: ['25%', '50%'],
+                center: ['50%', '60%'],
                 roseType: 'area',
                 label: {
                     position: 'outside',  // Place labels outside the pie chart
@@ -1307,15 +1307,15 @@ def metricsGatekeeperViz(inputDict):
                 }
             ],
             legend: {
-                top: 'bottom',
-                type: 'scroll',  // Enable scrolling for long legend lists
-                padding: [5, 10], // Top and right padding for legend items
-                orient: 'vertical',
-                left: 'right',  // Position legend to the right side of the chart
-                top: 'middle',  // Center align vertically
+                show: true,
+                top: 35,  // Adjust this value based on the actual height of your title
+                type: 'scroll',
+                padding: [5, 10],
+                orient: 'horizontal',  // Change the orientation to horizontal
+                left: 'center',        // Center the legend
                 textStyle: {
                     fontSize: 10  // Adjusted the legend font size here
-                }
+                },
             },
             tooltip: {
                 trigger: 'item',
@@ -1340,7 +1340,7 @@ def metricsGatekeeperViz(inputDict):
                 name: 'KPIs Progress',
                 type: 'pie',
                 radius: [20, 150],
-                center: ['25%', '50%'],
+                center: ['50%', '60%'],
                 roseType: 'area',
                 label: {
                     position: 'outside',  // Place labels outside the pie chart
