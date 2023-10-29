@@ -402,7 +402,7 @@ def get_all_values():
         kpi_values = Kpi_Values.query.all()
         if kpi_values:
             values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
-            return jsonify({'KPI Values': values_dict}), 200
+            return jsonify({'KPI_Values': values_dict}), 200
         else:
             return jsonify(message='No Values Available'), 204
 
@@ -417,7 +417,7 @@ def get_all_values():
 
         if kpi_values:
             values_dict = [kpi_value.to_dict() for kpi_value in kpi_values]
-            return jsonify({'KPI Values': values_dict}), 200
+            return jsonify({'KPI_Values': values_dict}), 200
         else:
             return jsonify(message='No Values Available'), 204
 
@@ -447,7 +447,7 @@ def get_all_values():
                 return jsonify(message='No Values Available'), 204
             if kpi_values_list:
                 values_dict = [kpi_value.to_dict() for kpi_value in kpi_values_list]
-                return jsonify({'KPI Values': values_dict}), 200
+                return jsonify({'KPI_Values': values_dict}), 200
 
         except Exception as e:
             return jsonify({'error': str(e)}), 500
