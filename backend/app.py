@@ -289,9 +289,6 @@ def add_kpi_values():
     period_month = data.get('period_month')
 
     try:
-        # Check if a Kpi record with the given name and circle_id exists
-        # check if the kpi_value of the same kpi_id, period_month, period_year exists 
-        # in the database, when adding a new kpi_value
         kpi = Kpi.query.filter_by(id=kpi_id).first()
        
         if not kpi:
@@ -456,7 +453,8 @@ def get_all_values():
 @app.route('/kpi_values/change_log', methods=["GET"])
 @jwt_required()
 def get_change_log():
-    """Fetch All Change Logs for Kpi Values"""
+    """Fetch Change Logs for Kpi Values - Supports Filtering Based on
+    Circle Id and Period """
 
     data = request.args
     circle_id = data.get('circle_id')
