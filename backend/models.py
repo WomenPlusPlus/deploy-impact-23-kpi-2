@@ -73,6 +73,14 @@ class Kpi(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+    description = db.Column(db.Text, nullable=False)
+    visibility = db.Column(db.Text, nullable=True)
+>>>>>>> 181d0df (update seed file)
+>>>>>>> main
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
     initial_value = db.Column(db.Float, default=0)
@@ -129,6 +137,10 @@ class User_Circle(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'), primary_key=True)
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> main
 
     
 
@@ -147,6 +159,11 @@ class Change_Log(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     registered_at = db.Column(db.TIMESTAMP, default=func.now())
     activity = db.Column(db.Text)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 8607679 (update models.py)
+>>>>>>> main
 
     def to_dict(self):
         return {
