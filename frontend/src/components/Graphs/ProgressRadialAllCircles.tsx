@@ -19,11 +19,12 @@ const ProgressRadialAllCircles = () => {
       },
     ],
     legend: {
-      type: 'scroll', // Enable scrolling for long legend lists
-      top: 20, //use this to move legend below title
-      padding: [5, 10], // Top and right padding for legend items
-      orient: 'horizontal',
-      left: 'center', // Position legend to the right side of the chart
+      show: true,
+      top: 30, // Adjust this value based on the actual height of your title
+      type: 'scroll',
+      padding: [5, 10],
+      orient: 'horizontal', // Change the orientation to horizontal
+      left: 'center', // Center the legend
       textStyle: {
         fontSize: 10, // Adjusted the legend font size here
       },
@@ -53,7 +54,7 @@ const ProgressRadialAllCircles = () => {
         name: 'KPIs Progress',
         type: 'pie',
         radius: [20, 80],
-        center: ['25%', '50%'],
+        center: ['50%', '60%'],
         roseType: 'area',
         label: {
           position: 'outside', // Place labels outside the pie chart
