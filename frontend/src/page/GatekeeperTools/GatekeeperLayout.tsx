@@ -6,10 +6,13 @@ import {
   SxProps,
   Typography,
 } from '@mui/material';
-import { globalStyles } from '../styles';
-import { ReactComponent as KPIOverviewIcon } from '../assets/KPIOverview.svg';
-import { ReactComponent as CreateNewKPIIcon } from '../assets/CreateNewKPI.svg';
+import { globalStyles } from '../../styles';
+import { ReactComponent as KPIOverviewIcon } from '../../assets/KPIOverview.svg';
+import { ReactComponent as CreateNewKPIIcon } from '../../assets/Document-add.svg';
+import { ReactComponent as CircleIcon } from '../../assets/Pencil-circle.svg';
+import { ReactComponent as UserIcon } from '../../assets/Users.svg';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { headerTabRoutes } from '../../utils/route';
 
 const styles: Record<string, SxProps> = {
   container: {
@@ -62,6 +65,9 @@ const GatekeeperLayout = ({ isDashboard }: { isDashboard: boolean }) => {
                 <Button
                   variant="outlined"
                   sx={styles.button}
+                  onClick={() =>
+                    navigate(`/${headerTabRoutes.tab[2]}/kpi/overview`)
+                  }
                 >
                   <KPIOverviewIcon />
                   KPI Overview
@@ -69,7 +75,9 @@ const GatekeeperLayout = ({ isDashboard }: { isDashboard: boolean }) => {
                 <Button
                   variant="outlined"
                   sx={styles.button}
-                  onClick={() => navigate('/gatekeeper/kpi/edit')}
+                  onClick={() =>
+                    navigate(`/${headerTabRoutes.tab[2]}/kpi/create`)
+                  }
                 >
                   <CreateNewKPIIcon />
                   Create New KPI
@@ -92,7 +100,7 @@ const GatekeeperLayout = ({ isDashboard }: { isDashboard: boolean }) => {
                   variant="outlined"
                   sx={styles.button}
                 >
-                  <CreateNewKPIIcon />
+                  <CircleIcon />
                   Circle Overview
                 </Button>
               </Stack>
@@ -113,7 +121,7 @@ const GatekeeperLayout = ({ isDashboard }: { isDashboard: boolean }) => {
                   variant="outlined"
                   sx={styles.button}
                 >
-                  <CreateNewKPIIcon />
+                  <UserIcon />
                   User Overview
                 </Button>
               </Stack>

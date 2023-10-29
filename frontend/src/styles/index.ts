@@ -60,6 +60,9 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
           alignItems: 'center',
           border: '1px solid var(--black-white-black, #000)',
         },
+        outlinedSizeSmall: {
+          padding: '7px 12px',
+        },
         outlinedSizeMedium: {
           padding: '12px',
         },
@@ -174,6 +177,7 @@ export const getDesignTokens = (mode: PaletteMode): ThemeOptions => ({
           flexDirection: 'column',
           alignItems: 'center',
           rowGap: '16px',
+          maxWidth: '400px',
         },
       },
     },

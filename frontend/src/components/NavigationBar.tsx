@@ -2,45 +2,45 @@ import { useMsal } from '@azure/msal-react';
 import {
   AppBar,
   Avatar,
-  Box,
   Button,
-  Divider,
-  Drawer,
-  FormControl,
-  FormLabel,
-  IconButton,
   Menu,
   MenuItem,
   Stack,
   Tab,
   Tabs,
-  TextField,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '../utils/route';
-import { ReactComponent as AddIcon } from '../assets/Plus-circle.svg';
-import { DatePicker } from '@mui/x-date-pickers';
-import { ReactComponent as CancelIcon } from '../assets/X-circle.svg';
-import { ReactComponent as SaveIcon } from '../assets/Save.svg';
-import CloseIcon from '@mui/icons-material/Close';
-import { globalStyles } from '../styles';
-import Tooltip from './Tooltip';
+import { headerTabRoutes } from '../utils/route';
+import { UserContext, loginUserLocalstorageItemKey } from '../utils/context';
+import { userGetApi } from '../services/userService';
+import { UserProfile } from '../types';
+import { autoLoginAfterExpire } from '../utils';
+import InsertKpiDrawer from './InsertKpiDrawer';
 
 export const NavigationBar = ({ page }: { page: number }) => {
   const { instance } = useMsal();
-  const [insertKPI, setInsertKPI] = useState<Record<string, any> | undefined>();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const { user, setUser } = useContext(UserContext);
+  const [userProfile, setUserProfile] = useState<UserProfile>();
+  const [userActionMenuOpen, setUserActionMenuOpen] =
+    useState<null | HTMLElement>(null);
+  const open = Boolean(userActionMenuOpen);
   const navigate = useNavigate();
 
-  let activeAccount;
-
-  if (instance) {
-    activeAccount = instance.getActiveAccount();
-  }
+  useEffect(() => {
+    if (user.id < 0) return;
+    userGetApi(user.id, user.token)
+      .then(res => {
+        setUserProfile(res.user);
+      })
+      .catch(err => {
+        if (err.response.status === 401)
+          autoLoginAfterExpire(user, setUser).catch(err => navigate('/login'));
+        else console.log(err);
+      });
+  }, [user, setUser, navigate]);
 
   // const handleLoginRedirect = () => {
   //   instance.loginRedirect(loginRequest).catch(error => console.log(error));
@@ -52,6 +52,10 @@ export const NavigationBar = ({ page }: { page: number }) => {
         mainWindowRedirectUri: '/login', // redirects after logout
         account: instance.getActiveAccount(),
       })
+      .then(() => {
+        setUser({ email: '', token: '', id: -1, isGatekeeper: false });
+        localStorage.removeItem(loginUserLocalstorageItemKey);
+      })
       .catch(error => console.log(error));
   };
 
@@ -60,13 +64,9 @@ export const NavigationBar = ({ page }: { page: number }) => {
   // };
 
   const handleChangePage = (page: number) => {
-    if (0 <= page && page < routes.tab.length) {
-      navigate(`/${routes.tab[page]}`);
+    if (0 <= page && page < headerTabRoutes.tab.length) {
+      navigate(`/${headerTabRoutes.tab[page]}`);
     }
-  };
-
-  const submitInsertKPI = () => {
-    setInsertKPI(undefined);
   };
 
   return (
@@ -82,7 +82,7 @@ export const NavigationBar = ({ page }: { page: number }) => {
         >
           <Tab label="KPI Overview" />
           <Tab label="Activity" />
-          <Tab label="GateKeeper Tools" />
+          {user.isGatekeeper && <Tab label="GateKeeper Tools" />}
         </Tabs>
         <Stack
           direction={'row'}
@@ -91,36 +91,29 @@ export const NavigationBar = ({ page }: { page: number }) => {
           flexGrow={0}
           alignItems={'center'}
         >
+          <InsertKpiDrawer />
           <Button
-            variant="contained"
-            sx={globalStyles.buttonTinySize}
-            onClick={() => setInsertKPI({})}
-          >
-            <AddIcon />
-            Insert KPI Value
-          </Button>
-          <Button
-            onClick={e => setAnchorEl(e.currentTarget)}
+            onClick={e => setUserActionMenuOpen(e.currentTarget)}
             variant="text"
             sx={{ p: '8px 0px' }}
           >
             <Avatar
               sx={{ width: 32, height: 32 }}
-              alt={activeAccount ? activeAccount.name : 'Unknown'}
+              alt={userProfile ? userProfile.first_name : 'Unknown'}
               src="/not-supported.jpg"
             />
             <Typography
               fontSize={'14px'}
               fontWeight={400}
             >
-              {activeAccount ? activeAccount.name : 'Unknown'}
+              {userProfile ? userProfile.display_name : 'Unknown'}
             </Typography>
           </Button>
           <Menu
-            anchorEl={anchorEl}
+            anchorEl={userActionMenuOpen}
             open={open}
-            onClose={() => setAnchorEl(null)}
-            onClick={() => setAnchorEl(null)}
+            onClose={() => setUserActionMenuOpen(null)}
+            onClick={() => setUserActionMenuOpen(null)}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
@@ -134,117 +127,6 @@ export const NavigationBar = ({ page }: { page: number }) => {
           </Menu>
         </Stack>
       </Toolbar>
-      <Drawer
-        open={!!insertKPI}
-        anchor="right"
-        onClose={() => setInsertKPI(undefined)}
-      >
-        <Box
-          display={'flex'}
-          justifyContent={'flex-end'}
-          pt={'12px'}
-        >
-          <IconButton onClick={() => setInsertKPI(undefined)}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Stack
-          sx={{
-            pb: '12px',
-            px: '48px',
-            alignItems: 'flex-start',
-            rowGap: '40px',
-            width: '503px', // TODO: remove
-          }}
-        >
-          <Typography
-            fontSize={'24px'}
-            fontWeight={500}
-          >
-            Input KPI value
-          </Typography>
-          <Stack
-            rowGap={'24px'}
-            width={'100%'}
-          >
-            <TextField
-              select
-              variant="standard"
-              label="Circle"
-              defaultValue={'placeholder'}
-              fullWidth
-            >
-              <MenuItem
-                disabled
-                value={'placeholder'}
-                sx={{ display: 'none' }}
-              >
-                Select one
-              </MenuItem>
-            </TextField>
-            <TextField
-              select
-              variant="standard"
-              label="KPI Name"
-              defaultValue={'placeholder'}
-              fullWidth
-            >
-              <MenuItem
-                disabled
-                value={'placeholder'}
-                sx={{ display: 'none' }}
-              >
-                Select one
-              </MenuItem>
-            </TextField>
-            <FormControl>
-              <FormLabel>
-                Period
-                <Tooltip
-                  title="The date range to which this KPI value belongs."
-                  width="278px"
-                />
-              </FormLabel>
-              <DatePicker
-                views={['month', 'year']}
-                format="mm.yyyy"
-                slotProps={{
-                  textField: { variant: 'standard', fullWidth: true },
-                }}
-              />
-            </FormControl>
-            <TextField
-              variant="standard"
-              label="Value"
-              placeholder={'00'}
-              required
-              fullWidth
-            />
-          </Stack>
-          <Stack
-            direction={'row'}
-            justifyContent={'space-between'}
-            width={'100%'}
-          >
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setInsertKPI(undefined)}
-            >
-              <CancelIcon />
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={submitInsertKPI}
-              size="small"
-            >
-              <SaveIcon />
-              Save new KPI value
-            </Button>
-          </Stack>
-        </Stack>
-      </Drawer>
     </AppBar>
   );
 };

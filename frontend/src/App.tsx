@@ -6,15 +6,18 @@
 import { MsalProvider } from '@azure/msal-react';
 import './App.css';
 import { IPublicClientApplication } from '@azure/msal-browser';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { getDesignTokens } from './styles';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import UserLogin from './page/UserLogin';
 import MainLayout from './page/MainLayout';
-import GatekeeperKPICreate from './page/GatekeeperKPICreate';
+import GatekeeperKPICreate from './page/GatekeeperTools/GatekeeperKPICreate';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { UserContext } from './utils/context';
+import GatekeeperKpiOverview from './page/GatekeeperTools/GatekeeperKpiOverview';
+import GatekeeperKPIEdit from './page/GatekeeperTools/GatekeeperKPIEdit';
 
 const router = createBrowserRouter([
   {
@@ -30,8 +33,16 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: 'kpi/edit',
+        path: 'kpi/create',
         element: <GatekeeperKPICreate />,
+      },
+      {
+        path: 'kpi/overview',
+        element: <GatekeeperKpiOverview />,
+      },
+      {
+        path: 'kpi/edit/:id',
+        element: <GatekeeperKPIEdit />,
       },
     ],
   },
@@ -46,12 +57,20 @@ const router = createBrowserRouter([
  */
 const App = ({ instance }: { instance: IPublicClientApplication }) => {
   const theme = useMemo(() => createTheme(getDesignTokens('light')), []);
+  const [user, setUser] = useState({
+    email: '',
+    token: '',
+    id: -1,
+    isGatekeeper: false,
+  });
 
   return (
     <ThemeProvider theme={theme}>
       <MsalProvider instance={instance}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <RouterProvider router={router} />
+          <UserContext.Provider value={{ user, setUser }}>
+            <RouterProvider router={router} />
+          </UserContext.Provider>
         </LocalizationProvider>
       </MsalProvider>
     </ThemeProvider>

@@ -4,6 +4,9 @@ import { ReactComponent as MicrosoftLogoSVG } from '../assets/Microsoft_logo.svg
 import { loginRequest } from '../authConfig';
 import { ReactComponent as LogoSVG } from '../assets/Logo.svg';
 import { useNavigate } from 'react-router-dom';
+import { userLoginApi } from '../services/userService';
+import { useContext } from 'react';
+import { UserContext, loginUserLocalstorageItemKey } from '../utils/context';
 
 const styles = {
   toolbar: {
@@ -18,6 +21,7 @@ const UserLogin = () => {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/hooks.md
    */
   const { instance } = useMsal();
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLoginPopup = () => {
@@ -33,6 +37,48 @@ const UserLogin = () => {
       })
       .then(_ => navigate('/'))
       .catch(error => console.log(error));
+  };
+
+  const mockLoginGatekeeper = () => {
+    userLoginApi('gatekeeper@test.com')
+      .then(res => {
+        const loginUser = {
+          id: res.user.id,
+          email: 'gatekeeper@test.com',
+          token: res.access_token,
+          isGatekeeper: true,
+        };
+        setUser(loginUser);
+        localStorage.setItem(
+          loginUserLocalstorageItemKey,
+          JSON.stringify(loginUser)
+        );
+        navigate('/');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const mockLoginEconomist = () => {
+    userLoginApi('economist@test.com')
+      .then(res => {
+        const loginUser = {
+          id: res.user.id,
+          email: 'economist@test.com',
+          token: res.access_token,
+          isGatekeeper: false,
+        };
+        setUser(loginUser);
+        localStorage.setItem(
+          loginUserLocalstorageItemKey,
+          JSON.stringify(loginUser)
+        );
+        navigate('/');
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   /**
@@ -78,6 +124,18 @@ const UserLogin = () => {
           >
             <MicrosoftLogoSVG style={{ marginRight: '4px' }} />
             Sign in with Microsoft
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={mockLoginGatekeeper}
+          >
+            Test sign in as Gatekeeper
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={mockLoginEconomist}
+          >
+            Test sign in as Economist
           </Button>
         </Stack>
       </UnauthenticatedTemplate>
