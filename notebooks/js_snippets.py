@@ -703,7 +703,8 @@ def metricsViz(inputDict):
                 }
             },
             legend: {
-                top: 30, //use this to move legend below title
+                top: 35, //use this to move legend below title
+                type: 'scroll',
                 itemGap: 30, // space between legend items
                 textStyle: {  // Added textStyle attribute here to set the font for legend text
                     fontFamily: 'Montserrat',
@@ -802,7 +803,7 @@ def metricsViz(inputDict):
             },
             
             polar: {
-                radius: [30, '80%']
+                radius: [20, '70%']
             },
             angleAxis: {
                 max: 100,
@@ -867,7 +868,7 @@ def metricsViz(inputDict):
                 {
                     name: '"""+option+"""',
                     type: 'pie',
-                    radius: ['50%', '80%'],
+                    radius: ['50%', '70%'],
                     data: [
                         {value: """+str(inputDict['graphValues']['value'])+""", name: '"""+option+"""', itemStyle: {color: '#E5A200'}},
                         // This data entry will represent the unfilled portion of the donut
@@ -1020,6 +1021,7 @@ def metricsGatekeeperViz(inputDict):
             },
             legend: {
                 top: 35, //use this to move legend below title
+                type: 'scroll',
                 itemGap: 30, // space between legend items
                 textStyle: {  // Added textStyle attribute here to set the font for legend text
                     fontFamily: 'Montserrat',
@@ -1094,6 +1096,7 @@ def metricsGatekeeperViz(inputDict):
             },
             legend: {
                 top: 35, //use this to move legend below title
+                type: 'scroll',
                 itemGap: 30, // space between legend items
                 textStyle: {  // Added textStyle attribute here to set the font for legend text
                     fontFamily: 'Montserrat',
@@ -1192,7 +1195,7 @@ def metricsGatekeeperViz(inputDict):
                 }
             },
             polar: {
-                radius: [30, '80%']
+                radius: [30, '70%']
             },
             angleAxis: {
                 max: 100,
@@ -1257,7 +1260,7 @@ def metricsGatekeeperViz(inputDict):
                 {
                     name: '"""+option+"""',
                     type: 'pie',
-                    radius: ['50%', '80%'],
+                    radius: ['50%', '70%'],
                     data: [
                         {value: """+str(inputDict['graphValues']['valuesMean'])+""", name: '"""+option+"""', itemStyle: {color: '#E5A200'}},
                         // This data entry will represent the unfilled portion of the donut
