@@ -129,7 +129,7 @@ const KpiCumulative = () => {
   return (
     <EChartsReact
       option={option}
-      style={{ height: '200px' }}
+      style={{ height: '210px' }}
     />
   );
 };

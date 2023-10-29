@@ -30,7 +30,7 @@ const ProgressDonutHR = () => {
       {
         name: 'Progress',
         type: 'pie',
-        radius: ['50%', '80%'],
+        radius: ['50%', '70%'],
         data: [
           {
             value: value,
@@ -57,7 +57,7 @@ const ProgressDonutHR = () => {
         },
       },
     ],
-  };
+  };      
   return (
     <EChartsReact
       option={option}
