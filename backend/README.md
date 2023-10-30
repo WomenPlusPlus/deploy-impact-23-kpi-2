@@ -42,7 +42,7 @@ We are using PostgreSQL as Database. If you don't have it locally, please instal
 
 ## Database Schema
 
-![DB diagram] (images/Untitled-3.png)
+![DB diagram] (../images/Untitled-3.png)
 
 ## API Reference
 
