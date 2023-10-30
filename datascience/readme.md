@@ -8,6 +8,7 @@ This directory contains all raw and processed datasets used in our projects. Typ
 - `raw/`: Original, untouched datasets.
 - `processed/`: Cleaned and preprocessed data ready for analysis.
 - `external/`: Any external data sources, like third-party datasets or APIs.
+- `final/`: Final dataset shared with the backend.
 
 ## 2. [notebooks](./notebooks/)
 Here, you'll find Jupyter notebooks that document the exploratory analyses, data cleaning processes, modeling, and other interactive content. It's a space for experimentation and prototyping. The notebooks are named in a sequence for easier navigation, e.g., `00_data_exploration.ipynb`, `01_KPI_design.ipynb`, etc.
