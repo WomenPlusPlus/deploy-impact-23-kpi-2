@@ -2,7 +2,7 @@
 
 ![Knights](https://github.com/WomenPlusPlus/deploy-impact-23-kpi-2/assets/9113484/a193d790-b8d5-466a-9bf4-46913c057f9a)
 
-Welcome to the KPI Tracking App repository of the team KPI2, a centralized solution crafted to replace traditional tools like Excel sheets for monitoring Key Performance Indicators (KPIs). Tailored for organizations like Pro Juventute, this platform aims to offer a unified system for tracking diverse KPIs, many of which aren't automatically measurable. Leveraging modern technologies, this app streamlines the process of data collection, visualization, and decision-making. From team economists inputting monthly data to gatekeepers defining and maintaining KPIs, this project serves as a one-stop solution to drive efficiency, transparency, and data-driven growth. Dive into the sections below for a comprehensive understanding of the project's purpose, technical stack, requirements, and more.
+Welcome to the KPI Tracking App repository of the Knights of Performance Insights (KPI2), a centralized solution crafted to replace traditional tools like Excel sheets for monitoring Key Performance Indicators (KPIs). Tailored for organizations like Pro Juventute, this platform aims to offer a unified system for tracking diverse KPIs, many of which aren't automatically measurable. Leveraging modern technologies, this app streamlines the process of data collection, visualization, and decision-making. From team economists inputting monthly data to gatekeepers defining and maintaining KPIs, this project serves as a one-stop solution to drive efficiency, transparency, and data-driven growth. Dive into the sections below for a comprehensive understanding of the project's purpose, technical stack, requirements, and more.
 
 ---
 
