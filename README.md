@@ -10,7 +10,8 @@ Welcome to the KPI Tracking App repository of the Knights of Performance Insight
 - **[backend](./backend/)**: Contains all the server-side logic, database models, and API endpoints.
 - **[datascience](./datascience/)**: Houses data analysis scripts, Jupyter notebooks, and other data-related assets.
 - **[frontend](./frontend/)**: Dedicated to the user interface of the app, built with Typescript and ReactJs.
-- **[venv](./venv/)**
+- **[venv](./venv/)**: This directory contains the virtual environment for the project. It ensures that the project has its own isolated space for Python dependencies, separate from system-wide installations. It's crucial to activate the virtual environment before running or developing the project locally.
+
 
 ## 1.1 Project Purpose and Justification
 Organizations like Pro Juventute, with a diverse set of programs and activities, often track their KPIs, many of which cannot be measured automatically. This project aims to move away from traditional methods like Excel sheets and create a centralized KPI tracking system that enhances efficiency and transparency.
