@@ -1,0 +1,99 @@
+<html>
+    <head>
+      <meta charset="utf-8" />
+      <title>ECharts</title>
+      <!-- Include the ECharts library from a CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    </head>
+    <body>
+    
+      <!-- Prepare a DOM container with width and height -->
+      <div id="main" style="width: 600px;height:400px;"></div>
+            
+      <!-- Include Google Fonts for Montserrat -->
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+      
+      <script type="text/javascript">
+        
+            // Initialize the echarts instance based on the prepared dom
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // Apply Montserrat font to ECharts container
+            document.getElementById('main').style.fontFamily = 'Montserrat, sans-serif';
+            
+            var option = {
+                title: [
+                    {
+                        text: 'Cumulated Progress (%)',
+                        left: '0%',  // Optional: Align the title
+                        top: 'top',  // Optional: Set the position of the title
+                        textStyle: {
+                            color: '#000',
+                            fontFamily: 'Montserrat',
+                            fontSize: 12
+                        },
+                        left: '0%'
+                    }
+                ],
+                series: {
+                    name: 'Progress',
+                    type: 'bar',
+                    data: [{value: 125.0001, itemStyle: {color: "#e5a200"}},{value: 124.0001, itemStyle: {color: "#FBBB21"}},{value: 68.0001, itemStyle: {color: "#FECC33"}}
+                    ],
+                    coordinateSystem: 'polar',
+                    label: {
+                        show: false,
+                        position: 'middle',
+                        formatter: '{b}: {c}',
+                        textStyle: {
+                            fontFamily: 'Montserrat'
+                        }
+                    }
+                },
+                tooltip: { // formated here to show round values at display
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    textStyle: { 
+                        fontFamily: 'Montserrat'
+                    },
+                    formatter: function(params) {
+                        var tip = params[0].axisValueLabel + '<br>';
+                        params.forEach(function(param) {
+                            tip += param.marker + ' ' + param.seriesName + ': ' + Math.round(param.value) + '<br>';
+                        });
+                        return tip;
+                    }
+                },
+                
+                polar: {
+                    radius: [30, '80%']
+                },
+                angleAxis: {
+                    max: 100,
+                    startAngle: 90,
+                    axisLabel: {
+                        textStyle: {
+                            fontFamily: 'Montserrat'
+                        }
+                    }
+                },
+                radiusAxis: {
+                    type: 'category',
+                    data: ['count leads', 'count sessions on .projuventute.ch', 'net promoter score'], // introduce kpi names for circle
+                    show: false, // hide labels in front of bars, too messy
+                    axisLabel: {
+                        textStyle: {
+                            fontFamily: 'Montserrat'
+                        }
+                    }
+                }
+            };
+
+            var myChart = echarts.init(document.getElementById('main'));
+            myChart.setOption(option);    
+            
+      </script>
+    </body>
+  </html>
