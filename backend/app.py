@@ -12,9 +12,11 @@ from sqlalchemy import and_
 import calendar
 
 load_dotenv()
+USERNAME = os.getenv('USERNAME')
+PASSWORD = os.getenv('PASSWORD')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///kpi_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 ACCESS_EXPIRES = timedelta(hours=1)
@@ -22,7 +24,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 jwt = JWTManager(app)
-CORS(app, origins=['http://localhost:3000'])
+CORS(app, origins=['https://kpi-2.onrender.com'])
 
 CURR_USER_KEY = 'user_id'
 
