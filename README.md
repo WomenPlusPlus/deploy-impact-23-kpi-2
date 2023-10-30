@@ -63,7 +63,7 @@ Develop an Open Source, Enterprise-ready web app to facilitate the consistent tr
 
 ## 1.7 Technology Stack
 - **Data Science**: Python & Flask. Visualizations on Apache Echarts JS library. Flask.
-- **UX/UI**: Figma, accessible here[https://www.figma.com/file/4C32qXR71cVyO6ykukVgMT/Pro-Juventute-Design-System?type=design&node-id=115-883&mode=design&t=GCG8SJHGtCUVTYyX-0]
+- **UX/UI**: Figma, [boards available here](https://www.figma.com/file/4C32qXR71cVyO6ykukVgMT/Pro-Juventute-Design-System?type=design&node-id=115-883&mode=design&t=GCG8SJHGtCUVTYyX-0)
 - **Backend**: Python, Flask.
 - **Frontend**: Typescript, ReactJs.
 - **Database**: PostgreSQL for development, SQLite for testing, and ElephantSQL for production.
