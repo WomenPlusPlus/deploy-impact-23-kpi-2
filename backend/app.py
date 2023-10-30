@@ -24,7 +24,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 jwt = JWTManager(app)
-CORS(app, origins=['http://localhost:3000'])
+CORS(app, origins=['https://kpi-2.onrender.com'])
 
 CURR_USER_KEY = 'user_id'
 
