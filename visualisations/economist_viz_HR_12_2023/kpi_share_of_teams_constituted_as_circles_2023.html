@@ -1,0 +1,141 @@
+<html>
+    <head>
+      <meta charset="utf-8" />
+      <title>ECharts</title>
+      <!-- Include the ECharts library from a CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    </head>
+    <body>
+    
+      <!-- Prepare a DOM container with width and height -->
+      <div id="main" style="width: 600px;height:400px;"></div>
+            
+      <!-- Include Google Fonts for Montserrat -->
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+      
+      <script type="text/javascript">
+        
+                    // Initialize the echarts instance based on the prepared dom
+                    var myChart = echarts.init(document.getElementById('main'));
+
+                    // Apply Montserrat font to ECharts container
+                    document.getElementById('main').style.fontFamily ='Montserrat, sans-serif';
+                    
+                    // Prepare data
+                    var data = [
+                        {
+                        name: 'Cumulative Share Of Teams Constituted As Circles',
+                            type: 'line',
+                            data: [35.0, 50.0, 50.0, 55.0, 70.0, 80.0, 85.0, 90.0, 90.0, 90.0, 95.0, 95.0], // Add cumulative data here
+                                areaStyle: {
+                                    color: {
+                                        type: 'linear',
+                                        x: 0,
+                                        y: 0,
+                                        x2: 0,
+                                        y2: 1,
+                                        colorStops: [{
+                                            offset: 0, color: 'rgba(208, 0, 113, 0.5)' // color at 0% position
+                                        }, {
+                                            offset: 1, color: 'rgba(208, 0, 113, 0)' // color at 100% position
+                                        }],
+                                        global: false // false by default
+                                    }
+                                },  
+                            itemStyle: {color: '#D00071'},
+                            markLine: {
+                                silent: true,
+                                data: [
+                                    {
+                                        yAxis: 100.0,
+                                        lineStyle: {color: '#D00071', width: 1.5, type: 'dotted'},
+                                        label: {
+                                            show: true,
+                                            position: 'end',
+                                            formatter: 'Target',
+                                            color: '#000000'
+                                        }
+                                    },
+                                    {
+                                        yAxis: 0.0,
+                                        lineStyle: {color: '#D00071', width: 1.5, type: 'dotted'},
+                                        label: {
+                                            show: true,
+                                            position: 'end',
+                                            formatter: 'Baseline',
+                                            color: '#000000'
+                                        }
+                                    }
+                                ],
+                                symbol: 'none'
+                            }
+                        }
+                    ];
+                    
+                // Configure chart options
+                var option = {
+                    title: {
+                        text: 'Share Of Teams Constituted As Circles',
+                        textStyle: {
+                            fontFamily: 'Montserrat',
+                            fontSize: 12
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: function (params) {
+                            return params[0].axisValueLabel + '<br/>' +
+                                params.map(function (item) {
+                                    return item.marker + ' ' + item.seriesName + ': ' + item.data;
+                                }).join('<br/>');
+                        },
+                        textStyle: {
+                            fontFamily: 'Montserrat',
+                            fontSize: 12
+                        }
+                    },
+                    legend: {
+                        data: ['share of teams constituted as circles'], //KPIs
+                        bottom: 0,
+                        textStyle: {
+                            fontFamily: 'Montserrat'
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: true,
+                        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], //MONTHS
+                        axisLabel: {
+                            textStyle: {
+                                fontFamily: 'Montserrat'
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        scale: true,  
+                        name: '%_cumulative',  // Add this line to label the y-axis
+                        max : 100.0,
+                        min : 0.0,
+                        //nameLocation: 'center',
+                        //nameGap: 50,
+                        nameTextStyle: {   // Optional: Style the y-axis label
+                            color: '#000',
+                            fontFamily: 'Montserrat',
+                            fontSize: 14
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                fontFamily: 'Montserrat'
+                            }
+                        }
+                    },
+                    series: data
+                };
+
+                // Display the chart using the configuration items and data just specified.
+                myChart.setOption(option);
+                
+      </script>
+    </body>
+  </html>
