@@ -1,0 +1,90 @@
+<html>
+    <head>
+      <meta charset="utf-8" />
+      <title>ECharts</title>
+      <!-- Include the ECharts library from a CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    </head>
+    <body>
+    
+      <!-- Prepare a DOM container with width and height -->
+      <div id="main" style="width: 600px;height:400px;"></div>
+            
+      <!-- Include Google Fonts for Montserrat -->
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+      
+      <script type="text/javascript">
+        
+            // Initialize the echarts instance based on the prepared dom
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // Apply Montserrat font to ECharts container
+            document.getElementById('main').style.fontFamily = 'Montserrat, sans-serif';
+            
+            var option = {
+                title: {
+                    text: 'Progress (%) per Month per KPI',  // Add this line to set the title
+                    left: '0%',  // Optional: Align the title
+                    top: 'top',  // Optional: Set the position of the title
+                    textStyle: {  // Optional: Style the title
+                        color: '#000',
+                        fontFamily: 'Montserrat',
+                        fontSize: 12
+                    }                
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                    // Use axis to trigger tooltip
+                    type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+                    },
+                    textStyle: { 
+                        fontFamily: 'Montserrat'
+                    }
+                },
+                legend: {
+                    top: 30, //use this to move legend below title
+                    itemGap: 30, // space between legend items
+                    textStyle: {  // Added textStyle attribute here to set the font for legend text
+                        fontFamily: 'Montserrat',
+                        fontSize: 10   
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '30%',  // Increased the space between the grid and the title
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    axisLabel: {  // Added axisLabel attribute here to set the font for axis labels
+                        fontFamily: 'Montserrat'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Progress',
+                    nameLocation: 'center',
+                    nameGap: 50,
+                    nameTextStyle: {
+                        color: '#000',
+                        fontSize: 14,
+                        fontFamily: 'Montserrat'  // Added fontFamily here
+                    },
+                    axisLabel: {  // Added axisLabel attribute here to set the font for axis labels
+                        fontFamily: 'Montserrat'
+                    }
+                },
+                series: [ {name: "Count Leads", type: "bar", stack: "total", itemStyle: {color: "#e5a200"}, label: {show: true}, emphasis: {focus: "series"}, data: [-22.0, -9.0, 5.0, 19.0, 32.0, 46.0, 58.0, 69.0, 82.0, 96.0, 111.0, 125.0]},{name: "Count Sessions On .Projuventute.Ch", type: "bar", stack: "total", itemStyle: {color: "#FBBB21"}, label: {show: true}, emphasis: {focus: "series"}, data: [-7.0, 4.0, 16.0, 28.0, 40.0, 52.0, 64.0, 76.0, 88.0, 100.0, 112.0, 124.0]},{name: "Net Promoter Score", type: "bar", stack: "total", itemStyle: {color: "#FECC33"}, label: {show: true}, emphasis: {focus: "series"}, data: [68.0, 68.0, 68.0, 68.0, 68.0, 68.0, 68.0, 68.0, 68.0, 68.0, 68.0, 68.0]}
+                ]
+            };
+            
+            var myChart = echarts.init(document.getElementById('main'));
+            myChart.setOption(option);
+            
+      </script>
+    </body>
+  </html>

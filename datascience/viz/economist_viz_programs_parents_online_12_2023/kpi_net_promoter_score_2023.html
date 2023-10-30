@@ -1,0 +1,122 @@
+<html>
+    <head>
+      <meta charset="utf-8" />
+      <title>ECharts</title>
+      <!-- Include the ECharts library from a CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    </head>
+    <body>
+    
+      <!-- Prepare a DOM container with width and height -->
+      <div id="main" style="width: 600px;height:400px;"></div>
+            
+      <!-- Include Google Fonts for Montserrat -->
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+      
+      <script type="text/javascript">
+        
+                // Initialize the echarts instance based on the prepared dom
+                var myChart = echarts.init(document.getElementById('main'));
+
+                // Apply Montserrat font to ECharts container
+                document.getElementById('main').style.fontFamily = 'Montserrat, sans-serif';
+
+                // Prepare data
+                var value =35.0;  // This is the value to be displayed on the gauge
+
+                // Configure chart options
+                var option = {
+                    title: {
+                        text: 'Net Promoter Score',
+                        textStyle: {
+                            fontFamily: 'Montserrat',
+                            fontSize: 12
+                        }
+                    },
+                    tooltip: {
+                        formatter: '{a} <br/>{b} : {c}%'
+                    },
+                    series: [
+                        {
+                            name: 'Net Promoter Score', //Kpi Name here
+                            type: 'gauge',
+                            center: ['50%', '60%'],
+                            startAngle: 180,
+                            endAngle: 0,
+                            min: -100.0,
+                            max: 100.0,
+                            splitNumber: 10,
+                            itemStyle: {
+                                color: (value < -33) ? '#D63503' : (value < 33) ? '#FBBB21' : '#1C6420'  // Conditional color based on value
+                            },
+                            progress: {
+                                show: true,
+                                width: 40
+                            },
+                            pointer: {
+                                show: false
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    width: 40,
+                                    color: [[1, '#E0E0E0']]  // Background color set to light gray
+                                }
+                            },
+                            axisTick: {
+                                distance: -55,
+                                splitNumber: 10,
+                                lineStyle: {
+                                    width: 1,
+                                    color: '#999'
+                                }
+                            },
+                            splitLine: {
+                                distance: -60,
+                                length: 14,
+                                lineStyle: {
+                                    width: 2,
+                                    color: '#999'
+                                }
+                            },
+                            axisLabel: {
+                                distance: 5,
+                                color: '#999',
+                                fontSize: 10,
+                                fontFamily: 'Montserrat'
+                            },
+                            anchor: {
+                                show: false
+                            },
+                            title: {
+                                show: true
+                            },
+                            detail: {
+                                valueAnimation: true,
+                                width: '60%',
+                                lineHeight: 40,
+                                borderRadius: 8,
+                                offsetCenter: [0, '-15%'],
+                                fontSize: 30,
+                                fontWeight: 'bolder',
+                                fontFamily: 'Montserrat',
+                                formatter: '{value} NPS', //Kpi Name here
+                                color: 'inherit'
+                            },
+                            data: [
+                                {
+                                    value: value,
+                                    itemStyle: {
+                                        color: (value < -33) ? '#D63503' : (value < 33) ? '#FBBB21' : '#1C6420'  // Conditional color based on value
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                // Display the chart using the configuration items and data just specified.
+                myChart.setOption(option);
+                
+      </script>
+    </body>
+  </html>
