@@ -1,14 +1,17 @@
 # deploy-impact-23-kpi-2: Knights of Performance Insights
 
+![Here we are, the KPIs]([URL](https://www.dropbox.com/scl/fi/lm54giutd8cxlh5or2mpw/DALL-E-2023-10-26-19.41.15-Render-of-8-young-knights-with-2-boys-and-6-girls-in-a-desert-landscape.-The-giant-Excel-sheets-in-the-distance-contrast-with-the-knights-weapons.png?rlkey=21vpg9yegu9qx4f4rwsqucege&dl=0))
+
+
 Welcome to the KPI Tracking App repository of the team KPI2, a centralized solution crafted to replace traditional tools like Excel sheets for monitoring Key Performance Indicators (KPIs). Tailored for organizations like Pro Juventute, this platform aims to offer a unified system for tracking diverse KPIs, many of which aren't automatically measurable. Leveraging modern technologies, this app streamlines the process of data collection, visualization, and decision-making. From team economists inputting monthly data to gatekeepers defining and maintaining KPIs, this project serves as a one-stop solution to drive efficiency, transparency, and data-driven growth. Dive into the sections below for a comprehensive understanding of the project's purpose, technical stack, requirements, and more.
 
 ---
 
 ## Repository Structure
-- **backend**: Contains all the server-side logic, database models, and API endpoints.
-- **datascience**: Houses data analysis scripts, Jupyter notebooks, and other data-related assets.
-- **frontend**: Dedicated to the user interface of the app, built with Typescript and ReactJs.
-- **venv**: Virtual environment for the project, ensuring dependencies are consistent across setups.
+- **[backend](./backend/)**: Contains all the server-side logic, database models, and API endpoints.
+- **[datascience](./datascience/)**: Houses data analysis scripts, Jupyter notebooks, and other data-related assets.
+- **[frontend](./frontend/)**: Dedicated to the user interface of the app, built with Typescript and ReactJs.
+- **[venv](./venv/)**
 
 ## 1.1 Project Purpose and Justification
 Organizations like Pro Juventute, with a diverse set of programs and activities, often track their KPIs, many of which cannot be measured automatically. This project aims to move away from traditional methods like Excel sheets and create a centralized KPI tracking system that enhances efficiency and transparency.
