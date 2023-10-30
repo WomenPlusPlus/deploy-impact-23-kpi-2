@@ -9,8 +9,6 @@ This directory contains all raw and processed datasets used in our projects. Typ
 - `processed/`: Cleaned and preprocessed data ready for analysis.
 - `external/`: Any external data sources, like third-party datasets or APIs.
 
-Remember not to upload sensitive or very large datasets directly to public repositories. Instead, use data versioning tools or cloud storage, and provide links or instructions on accessing the data.
-
 ## 2. [notebooks](./notebooks/)
 Here, you'll find Jupyter notebooks that document the exploratory analyses, data cleaning processes, modeling, and other interactive content. It's a space for experimentation and prototyping. The notebooks are named in a sequence for easier navigation, e.g., `00_data_exploration.ipynb`, `01_KPI_design.ipynb`, etc.
 
@@ -18,11 +16,7 @@ Here, you'll find Jupyter notebooks that document the exploratory analyses, data
 This directory houses standalone scripts or modules. These can be utility functions, data cleaning scripts, modeling pipelines, or any other code that has been modularized/refactored from the notebooks for reusability and production.
 
 ## 4. [viz](./viz/)
-The `viz` directory is dedicated to data visualization assets. This can include:
-
-- Static plots or charts saved as image files.
-- Interactive visualization code, e.g., using D3.js or Plotly.
-- Configuration or data files for specific visualization tools or platforms.
+The `viz` directory is dedicated to data visualization assets. It includes some sample visualisations used in both the Economist screens and the Gatekeeper screen.
 
 ---
 
