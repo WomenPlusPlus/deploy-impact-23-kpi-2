@@ -30,7 +30,7 @@ const ProgressDonutAllCircles = () => {
       {
         name: 'Progress',
         type: 'pie',
-        radius: ['50%', '80%'],
+        radius: ['50%', '70%'],
         data: [
           { value: 91.0, name: 'Progress', itemStyle: { color: '#E5A200' } },
           // This data entry will represent the unfilled portion of the donut
