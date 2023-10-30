@@ -40,6 +40,10 @@ We are using PostgreSQL as Database. If you don't have it locally, please instal
 
 `$ python3 app.py` Runs the server
 
+## Database Schema
+
+![DB diagram] (https://dbdiagram.io/d/65269d95ffbf5169f07c349b)
+
 ## API Reference
 
 #### Login User
