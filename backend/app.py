@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-<<<<<<< HEAD
 from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values, Change_Log, User_Circle
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
 from datetime import datetime, timezone, timedelta
@@ -11,32 +10,21 @@ from dateutil.relativedelta import relativedelta
 from flask_cors import CORS
 from sqlalchemy import and_
 import calendar
-=======
-from models import db, connect_db, User, Circle, Kpi, Kpi_Values
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
-from datetime import datetime
-from dotenv import load_dotenv
-import os
->>>>>>> 518ef37 (add models, endpoints)
 
 load_dotenv()
+USERNAME = os.getenv('USERNAME')
+PASSWORD = os.getenv('PASSWORD')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///kpi_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@mahmud.db.elephantsql.com/{USERNAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-<<<<<<< HEAD
 ACCESS_EXPIRES = timedelta(hours=1)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 jwt = JWTManager(app)
 CORS(app, origins=['http://localhost:3000'])
-=======
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
-jwt = JWTManager(app)
->>>>>>> 518ef37 (add models, endpoints)
 
 CURR_USER_KEY = 'user_id'
 
@@ -47,7 +35,6 @@ with app.app_context():
 
 ##################
 # User Endpoints 
-<<<<<<< HEAD
 
 # Callback function to check if a JWT exists in the database blocklist
 @jwt.token_in_blocklist_loader
@@ -56,38 +43,11 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
 
     return token is not None
-=======
-# ------------------------------------
-# >>> STILL DEBATING USING FLASK SESSION DEPENDING ON WHERE THIS APP IS GOING
-# ------------------------------------
-
-# @app.before_request
-# def add_user_to_g():
-#     """Add Logged-In User to Flask Global"""
-
-#     if CURR_USER_KEY in session:
-#         g.user = User.query.get(session[CURR_USER_KEY])
-
-#     else:
-#         g.user = None
-
-# def do_login(user):
-#     """Log User In """
-
-#     session[CURR_USER_KEY] = user.id
-
-# def do_logout():
-#     """Log User Out"""
-
-#     if CURR_USER_KEY in session:
-#         del session[CURR_USER_KEY]
->>>>>>> 518ef37 (add models, endpoints)
 
 @app.route('/login', methods=['POST'])
 def login_user():
     """Login Users"""
 
-<<<<<<< HEAD
     data = request.get_json()
     email=data["email"]
     try:
@@ -105,17 +65,6 @@ def login_user():
             user_dict = user.to_dict()
             return jsonify(access_token=access_token, user=user_dict), 200 
     
-=======
-    email = request.form.get('email')
-    try:
-        user = User.query.filter_by(email=email).first()
-        if user:
-            access_token = create_access_token(identity=user.id)
-            return jsonify(access_token=access_token, message='User Verified'), 200
-        else:
-            return jsonify(message='User Not Found'), 404
-
->>>>>>> 518ef37 (add models, endpoints)
     except Exception as e:
         return jsonify(error= str(e)), 500
    
@@ -125,7 +74,6 @@ def login_user():
 def get_user(user_id):
     """Fetches a user's details"""
 
-<<<<<<< HEAD
     try:
 
         user = User.query.filter_by(id=user_id).first()
@@ -173,19 +121,6 @@ def modify_token():
         return jsonify(error=str(e)), 500
 
 
-=======
-    current_user = get_jwt_identity()
-    try:
-        user = User.query.filter_by(id=user_id).first()
-        if user.id == current_user:
-            return jsonify({'user':user}), 200
-        else:
-            return jsonify(message='User Not Found'), 404
-
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-        
->>>>>>> 518ef37 (add models, endpoints)
 ##################
 # Circle Endpoints
 
@@ -195,22 +130,15 @@ def get_circle(circle_id):
     """Fetches a Circle by its ID"""
 
     try:
-<<<<<<< HEAD
         circle = Circle.query.filter_by(id=circle_id).first()
         if circle:
             return jsonify({'circle': circle.to_dict()}),200
-=======
-        circle = Circle.query.get_or_404(circle_id)
-        if circle:
-            return jsonify({'circle': circle}),200
->>>>>>> 518ef37 (add models, endpoints)
         else:
             return jsonify(message='Circle Not Found.'), 404
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-<<<<<<< HEAD
 @app.route('/circles/add', methods=['POST'])
 @jwt_required()
 def add_circles():
@@ -219,8 +147,6 @@ def add_circles():
     db.session.add(new_circle)
     db.session.commit()
     return jsonify(message='Circle added')
-=======
->>>>>>> 518ef37 (add models, endpoints)
 
 @app.route('/circles', methods=['GET'])
 @jwt_required()
@@ -230,12 +156,8 @@ def fetch_circles():
     try:
         circles = Circle.query.all()
         if circles:
-<<<<<<< HEAD
             circles_dict = [circle.to_dict() for circle in circles]
             return jsonify({'circles': circles_dict}), 200
-=======
-            return jsonify({'circles': circles}), 200
->>>>>>> 518ef37 (add models, endpoints)
         else:
             return jsonify(message='Circles Not Found.'), 404
 
@@ -246,7 +168,6 @@ def fetch_circles():
 ##################
 # kpis Endpoints
 
-<<<<<<< HEAD
 @app.route('/kpis/add', methods=['POST'])
 @jwt_required()
 def add_kpi_value():
@@ -282,27 +203,6 @@ def add_kpi_value():
                     db.session.commit()
                     return jsonify(message='KPI created successfully'), 201
                     
-=======
-@app.route('/circles/<int:circle_id>/kpis/add', methods=['POST'])
-@jwt_required()
-def add_kpi_value(circle_id):
-
-    kpi_name = request.form.get('name')
-    try:
-        kpi = Kpi.query.filter_by(name = kpi_name).first()
-
-        if kpi:
-            return jsonify(message='KPI name already exists. Choose a different name.'), 400
-        
-        else:
-            data = request.form.to_dict()
-            data['circle_id'] = circle_id
-            new_kpi = Kpi(**data)
-            db.session.add(new_kpi)
-            db.session.commit()
-            return jsonify(message='KPI created successfully'), 201
-            
->>>>>>> 518ef37 (add models, endpoints)
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
@@ -311,7 +211,6 @@ def add_kpi_value(circle_id):
 @app.route('/kpis/<int:kpi_id>/edit', methods=['PUT'])
 @jwt_required()
 def edit_kpis(kpi_id):
-<<<<<<< HEAD
     """Update A KPI"""
 
     current_user = get_jwt_identity()
@@ -343,43 +242,17 @@ def edit_kpis(kpi_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-=======
-    
-    kpi = Kpi.query.filter_by(id=kpi_id).first()
-
-    if not kpi:
-        return jsonify(message='KPI Not Found'), 404
-
-    else:
-        try:
-            data = request.form.to_dict()
-            for key, value in data.items():
-                setattr(kpi, key, value)
-            db.session.commit()
-            return jsonify(message='KPI Updated Successfully'), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({'error': str(e)}), 500
->>>>>>> 518ef37 (add models, endpoints)
 
 
 @app.route('/kpis/<int:kpi_id>', methods=['GET'])
 @jwt_required()
 def get_kpi(kpi_id):
-<<<<<<< HEAD
     """Get A KPI by ID"""
 
     try:
         kpi = Kpi.query.filter_by(id=kpi_id).first()
         if kpi:
             return jsonify({'kpi': kpi.to_dict()}), 200
-=======
-     
-    try:
-        kpi = Kpi.query.filter_by(id=kpi_id)
-        if kpi:
-            return jsonify({'kpi': kpi}), 200
->>>>>>> 518ef37 (add models, endpoints)
         else:
             return jsonify(message='KPI Not Found.'), 404
 
@@ -390,20 +263,12 @@ def get_kpi(kpi_id):
 @app.route('/kpis', methods=['GET'])
 @jwt_required()
 def kpis_list():
-<<<<<<< HEAD
     """Get All KPIs"""
     try:
         kpi_list = Kpi.query.all()
         if kpi_list:
             kpis_dict = [kpi.to_dict() for kpi in kpi_list]
             return jsonify({'kpi_list':kpis_dict}), 200
-=======
-
-    try:
-        kpi_list = Kpi.query.all()
-        if kpi_list:
-            return jsonify({'kpi_list':kpi_list}), 200
->>>>>>> 518ef37 (add models, endpoints)
         else:
             return jsonify(message='KPIs Not Found.'), 404
 
@@ -414,7 +279,6 @@ def kpis_list():
 ##################
 # kpi_values Endpoints
 
-<<<<<<< HEAD
 @app.route('/kpi_values/add', methods=['POST'])
 @jwt_required()
 def add_kpi_values():
@@ -664,17 +528,6 @@ def get_mini_log(kpi_values_id):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-=======
-# @app.route('/kpis/<int:kpi_id>/kpi_values/<int:kpi_value_id>/add', methods=['POST'])
-# def add_kpi_values(kpi_value_id):
-#     # check first: if kpi.active == true 
-#     
-
-# @app.route('/kpis/<int:kpi_value_id>/edit', methods=['PUT'])
-# def edit_kpi_values():
-
-
->>>>>>> 518ef37 (add models, endpoints)
 
 if __name__ == '__main__':
     app.run()
