@@ -19,9 +19,21 @@ const ProgressCircularHR = () => {
       name: 'Progress',
       type: 'bar',
       data: [
-        { value: 75.0001, itemStyle: { color: '#e5a200' } },
-        { value: 95.0001, itemStyle: { color: '#FBBB21' } },
-        { value: 75.0001, itemStyle: { color: '#FECC33' } },
+        {
+          value: 75.0001,
+          itemStyle: { color: '#e5a200' },
+          name: 'Involuntary Headcount Change (Fte)',
+        },
+        {
+          value: 95.0001,
+          itemStyle: { color: '#FBBB21' },
+          name: 'Share Of Teams Constituted As Circles',
+        },
+        {
+          value: 75.0001,
+          itemStyle: { color: '#FECC33' },
+          name: 'Share Short Term Leave',
+        },
       ],
       coordinateSystem: 'polar',
       label: {
@@ -56,9 +68,8 @@ const ProgressCircularHR = () => {
         return tip;
       },
     },
-
     polar: {
-      radius: [30, '80%'],
+      radius: [20, '70%'],
     },
     angleAxis: {
       max: 100,

@@ -5,7 +5,7 @@ const ProgressCircularAllCircles = () => {
   const option = {
     title: [
       {
-        text: 'Average Progress (%) Per Circle Up Until Today', // Add this line to set the title
+        text: 'Average Progress (%) Per Circle', // Add this line to set the title
         left: '0%', // Optional: Align the title
         top: 'top', // Optional: Set the position of the title
         textStyle: {
@@ -60,7 +60,7 @@ const ProgressCircularAllCircles = () => {
       },
     },
     polar: {
-      radius: [30, '80%'],
+      radius: [20, '70%'],
     },
     angleAxis: {
       max: 100,
