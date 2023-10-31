@@ -33,6 +33,12 @@ with app.app_context():
     db.create_all()
 
 
+@app.route('/', methods=['Get'])
+def get_home():
+    """Render Home Page"""
+
+    return jsonify(message='home page')
+
 ##################
 # User Endpoints 
 
