@@ -73,10 +73,6 @@ class Kpi(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
     name = db.Column(db.Text, nullable=False, unique=True)
-
-    description = db.Column(db.Text, nullable=False)
-    visibility = db.Column(db.Text, nullable=True)
-
     periodicity = db.Column(db.Enum(Periodicity), nullable=False)
     unit = db.Column(db.Enum(Unit), nullable=False)
     initial_value = db.Column(db.Float, default=0)
@@ -97,15 +93,6 @@ class Kpi(db.Model):
             'active': self.active
         }
 
-    description = db.Column(db.Text, nullable=False)
-    visibility = db.Column(db.Text, nullable=False)
-    periodicity = db.Column(db.Enum(Periodicity), nullable=False)
-    unit = db.Column(db.Enum(Unit), nullable=False)
-    initial_value = db.Column(db.Float) #any default value?
-    target_value = db.Column(db.Float, nullable = False)
-    active = db.Column(db.Boolean, default=True)
-
-    kpi_values = db.relationship('kpi_values', foreign_keys='kpi_values.kpi_id', backref='kpi_id')
 
 
 class Kpi_Values(db.Model):
