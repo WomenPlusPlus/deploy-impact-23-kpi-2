@@ -159,7 +159,7 @@ class Change_Log(db.Model):
         }
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    circle_id = db.Column(db.Integer, db.ForeignKey('circles.id'))
+    
 
 def connect_db(app):
     db.app = app
