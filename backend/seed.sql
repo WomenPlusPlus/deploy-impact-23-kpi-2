@@ -85,4 +85,4 @@ CREATE TABLE change_logs (
     user_id INTEGER REFERENCES users,
     registered_at TIMESTAMP NOT NULL,
     activity TEXT NOT NULL
-)
+);
