@@ -45,22 +45,20 @@ const InsertKpiDrawer = () => {
   const [valueErrorMsg, setValueErrorMsg] = useState('');
 
   const handleInsertKPIValue = () => {
-    if (!circles) {
-      circleGetAllApi(user.token)
-        .then(res => {
-          setCircles(res.circles);
-          kpiGetAllApi(user.token)
-            .then(res => {
-              setKpis(res.kpi_list);
-            })
-            .catch(err => console.error(err));
-        })
-        .catch(err => console.error(err));
-    }
-    setInsertKPI({
-      kpi: dummyKpi,
-      value: { ...dummyKpiValue, id: 1 },
-    });
+    circleGetAllApi(user.token)
+      .then(res => {
+        setCircles(res.circles);
+        kpiGetAllApi(user.token)
+          .then(res => {
+            setKpis(res.kpi_list);
+            setInsertKPI({
+              kpi: dummyKpi,
+              value: { ...dummyKpiValue, id: 1 },
+            });
+          })
+          .catch(err => console.error(err));
+      })
+      .catch(err => console.error(err));
   };
 
   const submitInsertKPIValue = () => {

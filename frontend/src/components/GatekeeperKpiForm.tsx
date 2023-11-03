@@ -234,6 +234,7 @@ const GatekeeperKpiForm = ({
         >
           <TextField
             variant="standard"
+            type="number"
             label={
               <>
                 Initial Value
@@ -251,6 +252,7 @@ const GatekeeperKpiForm = ({
           />
           <TextField
             variant="standard"
+            type="number"
             label={
               <>
                 Target Value
