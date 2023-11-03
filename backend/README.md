@@ -241,6 +241,7 @@ To run tests, run the following command
 inside app.py:
 
 `comment this line: app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}'`
+
 `uncomment this line: app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'`
 
 `$ cd backend`
