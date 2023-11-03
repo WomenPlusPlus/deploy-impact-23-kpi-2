@@ -150,7 +150,7 @@ def dataCalculation(df,
                         year,
                         month,
                         palette=[PALETTE_PURPLE,PALETTE_MAGENTA],
-                        MONTH_LIST=MONTH_LIST):
+                        month_list=MONTH_LIST):
     
     """
     Create list of dictionaries per circle. Each dict contains
@@ -165,7 +165,7 @@ def dataCalculation(df,
         year (int): year
         month (int): month
         palette (list): list of color palettes
-        MONTH_LIST (list): list of months
+        month_list (list): list of months
     Returns:
         exportAll (list): list of dictionaries
     """
@@ -196,7 +196,7 @@ def dataCalculation(df,
                 dfTempLocal = dfTemp.loc[(df.kpi == k),['date','value']]
                 # define months for monthly graphic
                 months = dfTempLocal.date.dt.month.unique()
-                monthsRange = MONTH_LIST[months[0]-1:months[-1]]
+                monthsRange = month_list[months[0]-1:months[-1]]
                 
                 if  unit == 'chf'or unit == 'amount':
                     # Create 'aggregated' that cumulatively sums the 'value' column
@@ -288,7 +288,7 @@ def dataCalculation(df,
                     
                 # define months for quarters
                 months = dfTempLocal.date.dt.month.unique()
-                monthsRange = [MONTH_LIST[i-1] for i in months]
+                monthsRange = [month_list[i-1] for i in months]
                     
                 if  unit == 'chf' or unit == 'amount':
                     # Create 'aggregated' values that cumulatively sums the 'value' column
@@ -386,7 +386,7 @@ def dataCalculation(df,
                     
                 # define months for quarters
                 months = dfTempLocal.date.dt.month.unique()
-                monthsRange = [MONTH_LIST[i-1] for i in months]
+                monthsRange = [month_list[i-1] for i in months]
                     
                 values = dfTempLocal.value.mean()
                 
@@ -418,7 +418,7 @@ def metricsCalculation(df,
                   paletteProgress = PALETTE_YELLOW,
                   palettes=[PALETTE_OLIVE,PALETTE_GREEN,PALETTE_CYAN,
                             PALETTE_BLUE,PALETTE_RED,PALETTE_TERRACOTA],
-                  MONTH_LIST=MONTH_LIST):
+                  month_list=MONTH_LIST):
     
     """
     Create list of dictionaries per circle. Each dict contains
@@ -435,7 +435,7 @@ def metricsCalculation(df,
         option (string): 'progress' or 'performance' based on metric to be plotted. Progress is default
         plot (string): 'bar','circular','donut','radial' based on plot type
         palettes (list): list of color palettes
-        MONTH_LIST (list): list of months
+        month_list (list): list of months
     Returns:
         exportDict (list): list of dictionaries
     """
@@ -461,7 +461,7 @@ def metricsCalculation(df,
             for i,k in enumerate(kpis):
                 periodicity = dfTemp.loc[(df.kpi == k),'periodicity'].unique()[0]
                 # define time axis global
-                monthsRange = [MONTH_LIST[i] for i in range(month)]
+                monthsRange = [month_list[i] for i in range(month)]
                 
                 if periodicity == 'month':
                     dfTempLocal = dfTemp.loc[(df.kpi == k)]
@@ -482,7 +482,7 @@ def metricsCalculation(df,
               
                     # define time axis locally
                     months = dfTempLocal.date.dt.month.unique().tolist()
-                    monthsRange = [MONTH_LIST[i-1] for i in months]
+                    monthsRange = [month_list[i-1] for i in months]
                     
                     # use in the future if needed to adapt to yearly plots
                     # values = [[v]*3 for v in values]
@@ -644,7 +644,7 @@ def metricsGatekeeperCalculation(df,
                   plot = 'bar',#'circular','donut','radial','streamgraph','line'
                   palettes=[PALETTE_OLIVE,PALETTE_GREEN,PALETTE_CYAN,
                             PALETTE_BLUE,PALETTE_RED,PALETTE_TERRACOTA],
-                  MONTH_LIST=MONTH_LIST):
+                  month_list=MONTH_LIST):
     
     """
     Create dictionary with required data for Gatekeeper metrics plot.
@@ -661,7 +661,7 @@ def metricsGatekeeperCalculation(df,
         option (string): 'progress' or 'performance' based on metric to be plotted. Progress is default
         plot (string): 'bar','circular','donut','radial','streamgraph','line' based on plot type
         palettes (list): list of color palettes
-        MONTH_LIST (list): list of months
+        month_list (list): list of months
     Returns:
         exportDict (dict): dictionary with required data
     """
@@ -677,7 +677,7 @@ def metricsGatekeeperCalculation(df,
         circles = dfTemp.circle.unique().tolist()
         # define time axis
         months = dfTemp.date.dt.month.sort_values().unique()
-        monthsRange = [MONTH_LIST[i-1] for i in months]
+        monthsRange = [month_list[i-1] for i in months]
 
         if plot == 'bar':
             circleMetrics = []
