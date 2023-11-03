@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values, Change_Log, User_Circle
+from backend.models import db, connect_db, User, Circle, Kpi, TokenBlocklist, Periodicity, Unit, Kpi_Values, Change_Log, User_Circle
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required, get_jwt
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
@@ -16,8 +16,8 @@ USERNAME = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}' #comment-out before testing
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:' #uncomment before testing
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}' #comment-out before testing
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:' #uncomment before testing
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 ACCESS_EXPIRES = timedelta(hours=1)
