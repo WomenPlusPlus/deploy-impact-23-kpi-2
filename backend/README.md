@@ -236,4 +236,13 @@ To run tests, run the following command
 
 `$ cd backend`
 
-`$ python -m pytest`
+`$ python -m pytest tests/test_models.py`
+
+inside app.py:
+
+comment this line: app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}'
+uncomment this line: app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+
+`$ cd backend`
+
+`$ python -m unittest -v tests/test_app.py`
