@@ -16,7 +16,8 @@ USERNAME = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USERNAME}:{PASSWORD}@surus.db.elephantsql.com/{USERNAME}' #comment-out before testing
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:' #uncomment before testing
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 ACCESS_EXPIRES = timedelta(hours=1)
@@ -32,7 +33,7 @@ with app.app_context():
     connect_db(app)
     db.create_all()
 
-
+# delete route
 @app.route('/', methods=['Get'])
 def get_home():
     """Render Home Page"""
@@ -99,6 +100,7 @@ def get_user(user_id):
 
 
 @app.route('/users', methods=['GET'])
+@jwt_required()
 def get_users():
     """Fetches All Users"""
 
@@ -152,7 +154,7 @@ def add_circles():
     new_circle = Circle(**data)
     db.session.add(new_circle)
     db.session.commit()
-    return jsonify(message='Circle added')
+    return jsonify(message='Circle added'), 201
 
 @app.route('/circles', methods=['GET'])
 @jwt_required()
