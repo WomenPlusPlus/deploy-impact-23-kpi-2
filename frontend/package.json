@@ -32,7 +32,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && cp ./build/index.html ./build/200.html && surge ./build/ kpi-2.surge.sh"
   },
   "eslintConfig": {
     "extends": [

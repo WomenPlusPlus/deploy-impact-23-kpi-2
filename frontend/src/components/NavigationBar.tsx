@@ -47,6 +47,12 @@ export const NavigationBar = ({ page }: { page: number }) => {
   // };
 
   const handleLogoutPopup = () => {
+    if (user.email === 'test@test.com' || user.email === 'martin@test.com') {
+      setUser({ email: '', token: '', id: -1, isGatekeeper: false });
+      localStorage.removeItem(loginUserLocalstorageItemKey);
+      navigate('/login');
+      return;
+    }
     instance
       .logoutPopup({
         mainWindowRedirectUri: '/login', // redirects after logout

@@ -1,4 +1,4 @@
-export const API_PREFIX = 'http://127.0.0.1:5000/';
+export const API_PREFIX = 'https://kpi-2.onrender.com/';
 
 export const USER_LOGIN = API_PREFIX + 'login';
 export const USER_GET = (id: number) => API_PREFIX + `users/${id}`;

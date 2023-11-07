@@ -88,6 +88,7 @@ const Overview = () => {
             const index = rows.findIndex(row => row.id === kpiValue.kpi_id);
             if (index < 0) {
               const kpi = kpis!.find(item => item.id === kpiValue.kpi_id)!;
+              if (!kpi.active) continue;
               rows.push({
                 id: kpiValue.kpi_id,
                 kpiName: kpi.name,

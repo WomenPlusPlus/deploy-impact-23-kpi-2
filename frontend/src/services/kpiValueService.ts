@@ -26,6 +26,8 @@ export const kpiValueSearchApi = async (
   const response = await axios.get(KPI_VALUE_SEARCH, config);
   if (response.status === 200) {
     return response.data;
+  } else if (response.status === 204) {
+    return {};
   } else throw response;
 };
 

@@ -39,6 +39,12 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+### `npm run deploy`
+
+You have to install surge globally fitst, by `npm install -g surge`
+
+This will deploy frontend onto [kpi-2.surge.sh](https://kpi-2.surge.sh)
+
 ## Tech Stack
 
 - Material UI
@@ -46,6 +52,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 - Dayjs
 - Msal React
 - Apache Echarts
+- Surge
 
 ## Post MVP
 

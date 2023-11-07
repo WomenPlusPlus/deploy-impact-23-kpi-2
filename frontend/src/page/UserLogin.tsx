@@ -1,4 +1,4 @@
-import { UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
+import { useMsal } from '@azure/msal-react';
 import { AppBar, Button, Stack, Toolbar, Typography } from '@mui/material';
 import { ReactComponent as MicrosoftLogoSVG } from '../assets/Microsoft_logo.svg';
 import { loginRequest } from '../authConfig';
@@ -36,15 +36,20 @@ const UserLogin = () => {
         redirectUri: '/redirect',
       })
       .then(_ => navigate('/'))
-      .catch(error => console.log(error));
+      .catch(err => {
+        console.error(err);
+        setUser({ email: '', token: '', id: -1, isGatekeeper: false });
+        localStorage.removeItem(loginUserLocalstorageItemKey);
+        navigate('/login');
+      });
   };
 
   const mockLoginGatekeeper = () => {
-    userLoginApi('gatekeeper@test.com')
+    userLoginApi('martin@test.com')
       .then(res => {
         const loginUser = {
           id: res.user.id,
-          email: 'gatekeeper@test.com',
+          email: 'martin@test.com',
           token: res.access_token,
           isGatekeeper: true,
         };
@@ -61,11 +66,11 @@ const UserLogin = () => {
   };
 
   const mockLoginEconomist = () => {
-    userLoginApi('economist@test.com')
+    userLoginApi('test@test.com')
       .then(res => {
         const loginUser = {
           id: res.user.id,
-          email: 'economist@test.com',
+          email: 'test@test.com',
           token: res.access_token,
           isGatekeeper: false,
         };
@@ -105,40 +110,38 @@ const UserLogin = () => {
         <LogoSVG style={{ position: 'absolute', left: '48px' }} />
       </AppBar>
       <Toolbar sx={styles.toolbar} />
-      <UnauthenticatedTemplate>
-        <Stack
-          pl={'264px'}
-          rowGap={'40px'}
-          alignItems={'flex-start'}
+      <Stack
+        pl={'264px'}
+        rowGap={'40px'}
+        alignItems={'flex-start'}
+      >
+        <Typography
+          mt={'40px'}
+          fontSize={'32px'}
+          fontWeight={600}
         >
-          <Typography
-            mt={'40px'}
-            fontSize={'32px'}
-            fontWeight={600}
-          >
-            Welcome
-          </Typography>
-          <Button
-            variant="outlined"
-            onClick={handleLoginPopup}
-          >
-            <MicrosoftLogoSVG style={{ marginRight: '4px' }} />
-            Sign in with Microsoft
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={mockLoginGatekeeper}
-          >
-            Test sign in as Gatekeeper
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={mockLoginEconomist}
-          >
-            Test sign in as Economist
-          </Button>
-        </Stack>
-      </UnauthenticatedTemplate>
+          Welcome
+        </Typography>
+        <Button
+          variant="outlined"
+          onClick={handleLoginPopup}
+        >
+          <MicrosoftLogoSVG style={{ marginRight: '4px' }} />
+          Sign in with Microsoft
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={mockLoginGatekeeper}
+        >
+          Test sign in as Gatekeeper
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={mockLoginEconomist}
+        >
+          Test sign in as Economist
+        </Button>
+      </Stack>
     </>
   );
 };
